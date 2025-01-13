@@ -1,13 +1,20 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './Hints.css';
 import Modal from "../Modal/Modal";
 
-const Hints = ({h, x}) => {
+const Hints = ({ h, x }) => {
     const data = JSON.parse(h);
     const [hintIndex, setHintIndex] = useState(0);
     const [hintOption, setHintOption] = useState(data[hintIndex]);
     const [showExplanationModal, setShowExplanationModal] = useState(false);
     const [explanation, setExplanation] = useState('');
+
+    // Save the current hint index to localStorage whenever it changes
+    useEffect(() => {
+        const hintIndexes = JSON.parse(localStorage.getItem("hintIndexes")) || {};
+        hintIndexes[x] = hintIndex + 1;
+        localStorage.setItem("hintIndexes", JSON.stringify(hintIndexes));
+    }, [hintIndex, x]);
 
     useEffect(() => {
         const hintsMap = JSON.parse(localStorage.getItem("hintsMap")) || {};
@@ -15,10 +22,10 @@ const Hints = ({h, x}) => {
         localStorage.setItem("hintsMap", JSON.stringify(hintsMap));
     }, [x, h]);
 
-
     useEffect(() => {
         setHintOption(data[hintIndex]);
     }, [hintIndex, data]);
+
     const clearCheckedMarks = () => {
         const answerElements = document.querySelectorAll('li[data-answer]');
         answerElements.forEach(element => {
@@ -26,8 +33,7 @@ const Hints = ({h, x}) => {
         });
     };
 
-
-    const checkAnswerHintOption = (e, answer, explanation, afterApplyingTheOption) => {
+    const checkAnswerHintOption = (e, answer, explanation) => {
         if (answer === hintOption.correctAnswer.answer) {
             e.target.classList.add("correct-answer");
             setExplanation(explanation);
@@ -35,7 +41,7 @@ const Hints = ({h, x}) => {
             setTimeout(() => {
                 setShowExplanationModal(false);
                 if (hintIndex < data.length - 1) {
-                    setHintIndex(hintIndex + 1);
+                    setHintIndex(prevIndex => prevIndex + 1);
                 }
                 clearCheckedMarks();
             }, 1000);
@@ -72,19 +78,13 @@ const Hints = ({h, x}) => {
                                 onClick={() => {
                                     clearCheckedMarks();
                                     setHintIndex(index);
-                                    const hintIndexes = JSON.parse(localStorage.getItem("hintIndexes")) || {};
-                                    hintIndexes[x] = Math.max(index + 1, index || 0); // Store the key-value pair
-                                    localStorage.setItem("hintIndexes", JSON.stringify(hintIndexes));
                                 }}
                             ></span>
                         ))}
                     </div>
-                    <div className='index'>{hintIndex + 1} of {data.length} Questions
-                    </div>
+                    <div className='index'>{hintIndex + 1} of {data.length} Questions</div>
                 </div>
             </div>
-
-            {/*{hintIndex === data.length - 1 && <DataBypass q={hintSteps}/>}*/}
 
             <Modal show={showExplanationModal} onClose={() => setShowExplanationModal(false)}>
                 <p>{explanation}</p>

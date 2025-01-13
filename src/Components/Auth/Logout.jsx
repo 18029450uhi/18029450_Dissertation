@@ -52,10 +52,12 @@ const Logout = ({user, setUser}) => {
             <button className='general' onClick={() => setShowModal(true)}>{user.displayName}</button>
             {showModal && (
                 <UserModal
+                    user={user}
                     correctCount={correctCount}
                     wrongCount={wrongCount}
                     onClose={() => setShowModal(false)}
                     onLogout={handleLogout}
+                    setUser={setUser}
                 />
             )}
         </div>

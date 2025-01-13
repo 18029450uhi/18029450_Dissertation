@@ -54,10 +54,10 @@ const MathSolverUploader = ({onUpload}) => {
 const styles = {
     container: {
         backgroundColor: "#f9f9f9",
-        padding: "20px",
+        padding: "50px",
         borderRadius: "8px",
         boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-        maxWidth: "600px",
+        maxWidth: "500px",
         margin: "0 auto",
         fontFamily: "Arial, sans-serif",
         textAlign: "center",

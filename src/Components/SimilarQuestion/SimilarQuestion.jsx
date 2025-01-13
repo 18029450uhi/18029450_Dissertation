@@ -27,6 +27,11 @@ const SimilarQuestion = ({q}) => {
         setHintButtonEnabled(false); // Reset hint button state
         fetchedIndices.current.clear(); // Clear fetched indices
         setHintsOptions(null); // Reset hints options
+        setHindSteps([]); // Reset hint steps
+        setIsViewedHint(false); // Reset hint view state
+        setShowHintButton(false); // Reset hint button state
+        setLock(false);
+        clearAllSelections();
     }, [q]); // Run the effect whenever `q` changes
 
 
@@ -38,17 +43,27 @@ const SimilarQuestion = ({q}) => {
         fetchedIndices.current.add(index);
 
         try {
-            const prompt = `Given the following algebra question:
+            const prompt = `Act as a math educator specializing in algebra for middle school, high school, and advanced-level mathematics (Nat 5, GCSE, and higher levels).
+
+Analyze the following algebraic question:
 
 ${question.question}
 
-Generate a series of step-by-step multiple-choice hints (MCQs) that guide the user toward solving the equation. Each hint must:
+Task:
+Generate step-by-step multiple-choice hints (MCQs) that:
 
-    Pose a clear question: Each hint should present a specific question related to the problem-solving process, referencing the current equation or expression.
-    Offer four plausible options: Provide four options, with one correct answer and three plausible but incorrect ones.
-    Include informative feedback: For each option, provide a detailed explanation of why it is correct or incorrect.
-    Show updated equations: After the correct step, display the updated equation to show the progress made.
-    Progress logically: Each hint should build on the previous one, gradually leading the user toward the final solution.
+    Ask Focused Questions - Each hint must address one logical step in solving the equation or expression.
+    Provide 4 Options - Include one correct answer and three plausible but incorrect options to challenge understanding.
+    Explain Each Option - Offer brief explanations for why each option is correct or incorrect to reinforce learning.
+    Show Progress Updates - Display the updated equation or expression after each step to show progress.
+    Adapt to Problem Type - Automatically adjust hints for:
+        Simplification
+        Factorization
+        Solving linear and quadratic equations
+        Simultaneous equations
+        Substitution and evaluation
+        Inequalities and expressions
+    Encourage Active Learning - Avoid providing direct answers. Instead, focus on guiding the student to think critically and work through each step logically.
 
 Output Format
 
@@ -56,96 +71,31 @@ Output Format
   "hints": [
     {
       "step": 1,
-      "hint_question": "What is the first step to solve this equation?",
+      "hint_question": "What is the first step to simplify this expression?",
       "options": [
-        {
-          "option": "Option A",
-          "explanation": "Explanation for Option A (why it's incorrect)."
-        },
-        {
-          "option": "Option B (Correct)",
-          "explanation": "Explanation for Option B (why it's correct)."
-        },
-        {
-          "option": "Option C",
-          "explanation": "Explanation for Option C (why it's incorrect)."
-        },
-        {
-          "option": "Option D",
-          "explanation": "Explanation for Option D (why it's incorrect)."
-        }
+        { "option": "Option A", "explanation": "Reason why Option A is incorrect." },
+        { "option": "Option B (Correct)", "explanation": "Reason why Option B is correct." },
+        { "option": "Option C", "explanation": "Reason why Option C is incorrect." },
+        { "option": "Option D", "explanation": "Reason why Option D is incorrect." }
       ],
       "correct_option": "B",
-      "updated_equation": "Updated equation after the correct step."
+      "updated_equation": "Updated equation or expression after this step."
     },
     {
       "step": 2,
-      "hint_question": "What is the next step to simplify the equation?",
+      "hint_question": "What is the next step to factorize this expression?",
       "options": [
-        {
-          "option": "Option A",
-          "explanation": "Explanation for Option A (why it's correct)."
-        },
-        {
-          "option": "Option B",
-          "explanation": "Explanation for Option B (why it's incorrect)."
-        },
-        {
-          "option": "Option C",
-          "explanation": "Explanation for Option C (why it's incorrect)."
-        },
-        {
-          "option": "Option D",
-          "explanation": "Explanation for Option D (why it's incorrect)."
-        }
+        { "option": "Option A", "explanation": "Reason why Option A is correct." },
+        { "option": "Option B", "explanation": "Reason why Option B is incorrect." },
+        { "option": "Option C", "explanation": "Reason why Option C is incorrect." },
+        { "option": "Option D", "explanation": "Reason why Option D is incorrect." }
       ],
       "correct_option": "A",
-      "updated_equation": "Updated equation after the correct step."
+      "updated_equation": "Updated factorized form."
     }
   ],
-  "final_hint": "Now that you have the simplified equation, solve for the variable independently."
-}
-
-Example
-
-Question: Solve the equation 2x+5=112x+5=11.
-Step 1:
-
-    Hint Question: What is the first step to isolate the variable term 2x2x?
-
-Options:
-
-    A. Add 5 to both sides
-        Explanation: Adding 5 increases the constant, which complicates the equation instead of simplifying it.
-    B. Subtract 5 from both sides (Correct)
-        Explanation: Subtracting 5 removes the constant term on the left side, helping isolate 2x2x.
-    C. Multiply both sides by 2
-        Explanation: Multiplying both sides prematurely does not simplify the equation.
-    D. Divide both sides by 2
-        Explanation: Division happens later, after isolating 2x2x.
-
-Correct Option: B
-Updated Equation: 2x=62x=6
-Step 2:
-
-    Hint Question: After subtracting 5 from both sides, what equation do we get?
-
-Options:
-
-    A. 2x=62x=6 (Correct)
-        Explanation: Subtracting 5 from 2x+5=112x+5=11 simplifies to 2x=62x=6.
-    B. 2x=162x=16
-        Explanation: This results from adding instead of subtracting.
-    C. x+5=11x+5=11
-        Explanation: This is the original equation, no steps have been taken.
-    D. 2x−5=112x−5=11
-        Explanation: This reflects an incorrect operation where subtraction was misapplied.
-
-Correct Option: A
-Updated Equation: 2x=62x=6
-Final Hint
-
-Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; // Provide the appropriate prompt logic
+  "final_hint": "Use the simplified or factorized form to proceed to the next step and verify your result."
+}`; // Provide the appropriate prompt logic
             const result = await handleUpload(prompt, schema);
             setHintsOptions(result.response.text);
             setHintButtonEnabled(true);
@@ -179,7 +129,7 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
         } else {
             generateHintOptions();
         }
-    }, [generateHintOptions, question.question]);
+    }, [index, generateHintOptions, question.question]);
 
     const getLocalStorage = () => {
         try {
@@ -204,26 +154,30 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
         setHindSteps(steps);
     };
     const nextQuestion = () => {
+        if (index < data.length - 1) {
+            const newIndex = index + 1;
+            setIndex(newIndex);
+            setQuestion(data[newIndex]); // Use the updated index to fetch the next question
+            updateQuestions();
+            resetHintState();
+        }
+    };
+
+    const previousQuestion = () => {
+        if (index > 0) {
+            const newIndex = index - 1;
+            setIndex(newIndex);
+            setQuestion(data[newIndex]); // Use the updated index to fetch the previous question
+            updateQuestions();
+            resetHintState();
+        }
+    };
+
+    const resetHintState = () => {
         setIsViewedHint(false);
         setHindSteps([]);
         setShowHintButton(false);
         setHintsOptions(null);
-        if (index < data.length - 1) {
-            setIndex(index + 1);
-            updateQuestions();
-        }
-        setQuestion(data[index]);
-    };
-
-    const previousQuestion = () => {
-        setIsViewedHint(false);
-        setHindSteps([]);
-        setShowHintButton(false);
-        if (index > 0) {
-            setIndex(index - 1);
-            updateQuestions();
-        }
-        setQuestion(data[index]);
     };
 
     const checkAnswerSimilarQuestion = (e, answer) => {
