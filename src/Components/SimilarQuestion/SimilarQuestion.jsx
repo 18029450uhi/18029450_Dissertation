@@ -37,7 +37,7 @@ const SimilarQuestion = (q) => {
             const prompt = `Given the following question: '${similarMCQ.question}', perform the following tasks:
 
     Generate a similar MCQ question of the same complexity. Include 4 answer options (one correct and three distractors).
-    Provide step-by-step hints as MCQs to help solve the problem. Each hint should include a question with 4 options. When the user selects an option:
+    Provide step-by-step hints as MCQs to help solve the problem. Each hint should include a question with 4 options. You must give 3 wrong answers and 1 logical correct answer all the time. When the user selects an option:
         If correct, display the next step as a new MCQ hint.
         If incorrect, provide feedback explaining why the choice is incorrect and allow the user to try again.
     Ensure the hints guide the user toward solving the problem, focusing on the same mathematical concepts as the original question.

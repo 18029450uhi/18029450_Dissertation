@@ -3,8 +3,10 @@ import './Question.css';
 import SimilarQuestion from '../SimilarQuestion/SimilarQuestion';
 import { handleUpload } from "../../RestUtils/GetFromGemini";
 import { schema } from "../../RestUtils/Schemas/SimilarMCQSchema";
+import { db } from "../../firebase-config";
+import { collection, addDoc } from 'firebase/firestore';
 
-const Question = ({ data }) => {
+const Question = ({ data, user }) => {
     const mcq = JSON.parse(data);
     const [similarMCQ, setSimilarMCQ] = useState(null);
     const [showSimilarQuestionModal, setShowSimilarQuestionModal] = useState(false);
@@ -30,9 +32,28 @@ const Question = ({ data }) => {
         generateSimilarMCQ();
     }, [generateSimilarMCQ]);
 
+    const postToFirestore = async (subject) => {
+        try {
+            await addDoc(collection(db, "question"), subject);
+        } catch (error) {
+            console.error('Error posting to Firestore:', error);
+        }
+    };
+
     const checkAnswer = (e, answer) => {
         if (!lock) {
-            if (answer === mcq.correctAnswer) {
+            const isCorrect = answer === mcq.correctAnswer;
+            const subject = {
+                data: {
+                    question: mcq.question,
+                    isCorrect: isCorrect,
+                    email: user.email
+                }
+            };
+
+            postToFirestore(subject);
+
+            if (isCorrect) {
                 e.target.classList.add("correct-answer");
                 e.target.classList.remove("incorrect-answer");
             } else {

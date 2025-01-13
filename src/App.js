@@ -1,12 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Question from "./Components/Question/Question";
 import UploadImage from "./Components/UploadQuestion/UploadImage";
 import Logout from './Components/Auth/Logout';
 import SignUpIn from './Components/Auth/SignUpIn';
-import Reset from './Components/Auth/ResetButton';
-import {auth, onAuthStateChanged} from './firebase-config';
+import ResetButton from './Components/Auth/ResetButton';
+import { auth, onAuthStateChanged } from './firebase-config';
 
 function App() {
     const [questionData, setQuestionData] = useState(null);
@@ -32,24 +32,24 @@ function App() {
         <Router>
             <div>
                 <Routes>
-                    <Route path="/signin" element={<SignUpIn setUser={setUser}/>}/>
+                    <Route path="/signin" element={<SignUpIn setUser={setUser} />} />
                     <Route path="/" element={
                         user ? (
                             <div>
                                 <div className="button-position">
-                                    <Logout setUser={setUser}/>
-                                    <Reset setUser={setUser} setQuestionData={setQuestionData}/>
+                                    <Logout user={user} setUser={setUser} />
+                                    <ResetButton setUser={setUser} setQuestionData={setQuestionData} />
                                 </div>
                                 {questionData ? (
-                                    <Question data={questionData}/>
+                                    <Question data={questionData} user={user} />
                                 ) : (
-                                    <UploadImage onUpload={handleUpload}/>
+                                    <UploadImage onUpload={handleUpload} />
                                 )}
                             </div>
                         ) : (
-                            <SignUpIn setUser={setUser}/>
+                            <SignUpIn setUser={setUser} />
                         )
-                    }/>
+                    } />
                 </Routes>
             </div>
         </Router>

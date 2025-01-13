@@ -1,0 +1,12 @@
+{
+    "mcq": {
+        "question": "Solve the equation: 4x + 3 = 2x + 9",
+        "options": {
+            "A": "x = 1",
+            "B": "x = 2",
+            "C": "x = 3",
+            "D": "x = 6"
+        },
+        "correctAnswer": "C"
+    }
+}
