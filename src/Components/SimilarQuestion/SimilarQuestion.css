@@ -3,6 +3,11 @@
     padding: 0;
 }
 
+.container .content .question-header {
+    background: #dfe5ff;
+    border-radius: 10px;
+
+}
 .similar-question .item-text {
     border: none;
     background: #dffff2;

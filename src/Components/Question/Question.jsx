@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './Question.css';
-import {data} from '/Users/amir/WebstormProjects/question-app/src/response.js';
+import { data } from '/Users/amir/WebstormProjects/question-app/src/response.js';
 import SimilarQuestion from '../SimilarQuestion/SimilarQuestion';
 import Hints from '../Hints/Hints';
 import katex from 'katex';
@@ -32,7 +32,6 @@ const Question = () => {
     const [lock, setLock] = useState(false);
 
     const updateQuestions = () => {
-        setShowHint(false);
         setLock(false);
 
         const answerElements = document.querySelectorAll('li[data-answer]');
@@ -57,10 +56,6 @@ const Question = () => {
         }
     };
 
-    // const toggleHint = () => {
-    //     setShowHint(!showHint);
-    // };
-
     const checkAnswer = (e, answer) => {
         if (lock === false) {
             if (answer === question.mcq.correctAnswer) {
@@ -80,10 +75,10 @@ const Question = () => {
 
     return (
         <div className='container'>
-            <h1>Question App</h1>
-            <hr/>
-            <div className='content'>
-                <div className='question-section'>
+            <div className='question-section'>
+                <h1>Question App</h1>
+                <hr/>
+                <div className='content'>
                     <h2 className='question-header'
                         dangerouslySetInnerHTML={{__html: renderText(question.mcq.question).__html + ' ' + renderEquation(question.mcq.question).__html}}></h2>
                     <ul>
@@ -101,20 +96,14 @@ const Question = () => {
                         <button className='previous-button' onClick={previousQuestion}>Previous</button>
                     </div>
                     <div className='index'>{index + 1} of {data.length} Questions</div>
-                    <button className='hint-button' onClick={() => setShowHintModal(true)}>Show Hint</button>
                     <button className='similar-question-button'
-                            onClick={() => setShowSimilarQuestionModal(true)}>Similar Question
+                            onClick={() => setShowSimilarQuestionModal(!showSimilarQuestionModal)}>Similar Question
                     </button>
                 </div>
             </div>
-
-            <Modal show={showHintModal} onClose={() => setShowHintModal(false)}>
-                <Hints hints={question.hints}/>
-            </Modal>
-
-            <Modal show={showSimilarQuestionModal} onClose={() => setShowSimilarQuestionModal(false)}>
+            <div className={`similar-question-section ${showSimilarQuestionModal ? 'show' : ''}`}>
                 <SimilarQuestion similarProblem={question.similarProblem}/>
-            </Modal>
+            </div>
         </div>
     );
 };
