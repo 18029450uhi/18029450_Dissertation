@@ -79,19 +79,24 @@ const Question = ({data, user}) => {
                 <hr/>
                 <div className='content'>
                     <h2 className='question-header'>{mcq.question}</h2>
-                    <ul>
-                        <li data-answer="A" onClick={event => checkAnswer(event, "A")}>{mcq.options.A}</li>
-                        <li data-answer="B" onClick={event => checkAnswer(event, "B")}>{mcq.options.B}</li>
-                        <li data-answer="C" onClick={event => checkAnswer(event, "C")}>{mcq.options.C}</li>
-                        <li data-answer="D" onClick={event => checkAnswer(event, "D")}>{mcq.options.D}</li>
-                    </ul>
-                    <button
-                        className='similar-question-button'
-                        onClick={() => setShowSimilarQuestionModal(!showSimilarQuestionModal)}
-                        disabled={!similarButtonEnabled}
-                    >
-                        Similar Question
-                    </button>
+                    {/*<ul>*/}
+                    {/*    <li data-answer="A" onClick={event => checkAnswer(event, "A")}>{mcq.options.A}</li>*/}
+                    {/*    <li data-answer="B" onClick={event => checkAnswer(event, "B")}>{mcq.options.B}</li>*/}
+                    {/*    <li data-answer="C" onClick={event => checkAnswer(event, "C")}>{mcq.options.C}</li>*/}
+                    {/*    <li data-answer="D" onClick={event => checkAnswer(event, "D")}>{mcq.options.D}</li>*/}
+                    {/*</ul>*/}
+                    <div className='content-button'>
+                        <button
+                            className='similar-question-button'
+                            onClick={() => setShowSimilarQuestionModal(!showSimilarQuestionModal)}
+                            disabled={!similarButtonEnabled}
+                        >
+                            Similar Question
+                        </button>
+                        {/*Based on the Gemini Response user will view a popup Model with Message like "You got it wrong" or "Congratulation! you have done it"*/}
+                        <input className='upload-answer' type="file" accept="image/*"/>
+                    </div>
+
                 </div>
             </div>
             {similarMCQ && (

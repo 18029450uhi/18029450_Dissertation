@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {handleUpload} from '../../RestUtils/GetFromGemini'
-import {getTextFromTesseract} from "../../RestUtils/GetTextFromImage";
+import {getText, handleUpload} from '../../RestUtils/GetFromGemini'
 import {schema} from "../../RestUtils/Schemas/MCQSchema";
+import {schema as imageSchema} from "../../RestUtils/Schemas/Image";
 
 const UploadImage = ({onUpload}) => {
     const [image, setImage] = useState(null);
@@ -13,8 +13,11 @@ const UploadImage = ({onUpload}) => {
     const getResponse = async () => {
         if (image) {
             try {
-                const text = (await getTextFromTesseract(image)).data.text;
-                const prompt = `You are a helpful math tutor. Guide the user through the solution step by step. Generate MCQs for the user based on the this ${text} question?`;
+                const text = JSON.parse(await getText(image, "Extract question/math equation.",imageSchema))
+                console.log(text)
+                // console.log(text.response)
+                // console.log(text.response.candidates)
+                const prompt = `You are a helpful math tutor. Guide the user through the solution step by step. Generate MCQs for the user based on the this ${text[0].question} question?`;
                 const result = await handleUpload(prompt, schema);
                 onUpload(result.response.text);
             } catch (error) {

@@ -36,45 +36,89 @@ const SimilarQuestion = (q) => {
         hasFetchedHintsOptions.current = true;
 
         try {
-            const prompt = `Given the following question: '${question.question}', perform the following tasks:
+            const prompt = `Given the following algebra question:
 
-    Generate a series of step-by-step MCQ hints that guide the user towards the correct solution. Each hint should:
+${question.question}
+
+Generate a series of step-by-step MCQ hints that guide the user towards the final step of solving the equation. Each hint should:
 
     Present a clear question: The hint should pose a specific question related to the problem-solving process, referencing the current equation or expression.
     Offer four plausible options: Provide four options, with one correct and three incorrect.
     Provide informative feedback: For each option, provide a detailed explanation of why it is correct or incorrect.
-    Progress logically: Each hint should build upon the previous one, leading the user closer to the final solution.
+    Progress logically: Each hint should build upon the previous one, leading the user to the final step of solving the equation.
 
+JSON Format:
+JSON
+
+{
+  "hints": [
     {
-      "similar_mcq": {
-        "question": "Text of the new question",
-        "options": ["Option A", "Option B", "Option C", "Option D"],
-        "correct_option": "Option A"
-      },
-      "hints": [
+      "step": 1,
+      "hint_question": "What is the first step to solve this equation?",
+      "options": [
         {
-          "step": 1,
-          "hint_question": "Hint question text for step 1",
-          "options": ["Option A", "Option B", "Option C", "Option D"],
-          "correct_option": "Option A",
-          "feedback": {
-            "correct": "Explanation of why the option is correct",
-            "incorrect": "Explanation of why the option is incorrect"
-          }
+          "option": "Option A",
+          "explanation": "Explanation for Option A (why it's incorrect)"
+          "equation_after_applying_the_current_option": "2x = 6"
         },
         {
-          "step": 2,
-          "hint_question": "Hint question text for step 2",
-          "options": ["Option A", "Option B", "Option C", "Option D"],
-          "correct_option": "Option B",
-          "feedback": {
-            "correct": "Explanation of why the option is correct",
-            "incorrect": "Explanation of why the option is incorrect"
-          }
+          "option": "Option B (Correct)",
+          "explanation": "Explanation for Option B (why it's correct)"
+        },
+        {
+          "option": "Option C",
+          "explanation": "Explanation for Option C (why it's incorrect)"
+        },
+        {
+          "option": "Option D",
+          "explanation": "Explanation for Option D (why it's incorrect)"
         }
-        // Add more steps as needed
-    ]
-}.`;
+      ],
+      "correct_option": "B"
+    },
+    {
+      "step": 2,
+      "hint_question": "What is the next step to simplify the equation?",
+      "options": [
+        // ... similar structure for options and correct answer
+      ]
+    }
+  ]
+}
+
+Use code with caution.
+
+Example:
+
+Question: Solve the equation 2x + 5 = 11.
+
+Hints:
+
+    Hint 1:
+        Hint Question: What is the first step to isolate the variable term, 2x?
+        Options:
+            A. Add 5 to both sides
+            B. Subtract 5 from both sides
+            C. Multiply both sides by 2
+            D. Divide both sides by 2
+        Correct Answer: B
+        Feedback:
+            Correct: Subtracting 5 from both sides will isolate the variable term.
+            Incorrect: The other options would either complicate the equation or lead to an incorrect result.
+
+    Hint 2:
+        Hint Question: After subtracting 5 from both sides, what equation do we get?
+        Options:
+            A. 2x = 6
+            B. 2x = 16
+            C. x + 5 = 11
+            D. 2x - 5 = 11
+        Correct Answer: A
+        Feedback:
+            Correct: Subtracting 5 from both sides results in 2x = 6.
+            Incorrect: The other options are incorrect due to arithmetic errors or incorrect operations.
+
+//After the second hint, the user will be directed back to the main question screen with the equation 2x = 6. They can then solve for x independently.`;
             const result = await handleUpload(prompt, schema);
             setHintsOptions(result.response.text);
             setHintButtonEnabled(true);
@@ -144,6 +188,8 @@ const SimilarQuestion = (q) => {
                 <li data-answer="D"
                     onClick={event => checkAnswerSimilarQuestion(event, "D")}>{question.options.D}</li>
             </ul>
+
+            {/* Initially the */}
             <div className='buttons'>
                 <button className='next-button' onClick={nextQuestion}>Next</button>
                 <button className='previous-button' onClick={previousQuestion}>Previous</button>
@@ -157,6 +203,9 @@ const SimilarQuestion = (q) => {
             >
                 Show Hint
             </button>
+
+            {/* if the user click any wrong answer than the Hind Section will be visible according to the similar question*/}
+            {/* after getting it wrong 1 time the user will able to toggle hints with hint button like previous implementation */}
 
             {
                 hintsOptions && (
