@@ -50,11 +50,12 @@ function App() {
                         <Route path="/" element={
                             user ? (
                                 <div>
+                                    <div className="log-banner">
+                                        <img src={`${process.env.PUBLIC_URL}/logo.svg`} alt="Log Section"
+                                             style={{height: '80px', width: '300px'}}/>
+                                    </div>
                                     <div className="button-position">
                                         <Logout user={user} setUser={setUser}/>
-                                        <div className="log-banner">
-                                            <img src={`${process.env.PUBLIC_URL}/logo.svg`} alt="Log Section" style={{ height: '80px', width: '300px' }}/>
-                                        </div>
                                         <ResetButton setUser={setUser} setQuestionData={setQuestionData}/>
                                     </div>
                                     {questionData ? (

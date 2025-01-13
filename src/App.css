@@ -39,14 +39,13 @@
 
 .button-position {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
 }
 
 .log-banner {
     /*background-color: #f0f0f0; !* Light gray background *!*/
     /*color: #333; !* Dark text color *!*/
-    text-align: center; /* Center the text */
+    /*text-align: center; !* Center the text *!*/
 }
 
 .main-content {
@@ -89,4 +88,32 @@
     width: 30%;
     max-height: 60vh; /* Adjust as needed */
     overflow-y: auto;
+}
+
+@media (max-width: 430px) {
+    .upload-answer-section {
+        width: 80%;
+    }
+
+    .previous-question-list-upload-section {
+        width: 80%;
+    }
+
+    .main-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .question-app {
+        order: 1;
+    }
+
+    .questions {
+        order: 2;
+    }
+
+    .previous-questions {
+        order: 3;
+    }
+
 }
