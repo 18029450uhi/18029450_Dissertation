@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import './Hints.css';
-import Modal from "../Model/Modal";
-const Hints = ({ hints }) => {
+import Modal from "../Modal/Modal";
+
+const Hints = ({h}) => {
+
+    const data = JSON.parse(h);
     const [hintIndex, setHintIndex] = useState(0);
-    const [hintQuestion, setHintQuestion] = useState(hints[0]);
+    const [hintOption, setHintOption] = useState(data[hintIndex]);
     const [lock, setLock] = useState(false);
     const [showExplanationModal, setShowExplanationModal] = useState(false);
     const [explanation, setExplanation] = useState('');
 
     useEffect(() => {
-        setHintQuestion(hints[hintIndex]);
-    }, [hintIndex, hints]);
+        setHintOption(data[hintIndex]);
+    }, [hintIndex, data]);
 
     const updateQuestions = () => {
         setLock(false);
@@ -22,7 +25,7 @@ const Hints = ({ hints }) => {
     };
 
     const nextQuestion = () => {
-        if (hintIndex < hints.length - 1) {
+        if (hintIndex < data.length - 1) {
             setHintIndex(hintIndex + 1);
             updateQuestions();
         }
@@ -35,14 +38,14 @@ const Hints = ({ hints }) => {
         }
     };
 
-    const checkAnswer = (e, answer, explanation) => {
+    const checkAnswerHintOption = (e, answer, explanation, afterApplyingTheOption) => {
         if (!lock) {
-            if (answer === hintQuestion.correct) {
+            if (answer === hintOption.correct) {
                 e.target.classList.add("correct-answer");
                 e.target.classList.remove("incorrect-answer");
             } else {
                 e.target.classList.add("incorrect-answer");
-                const correctAnswerElement = document.querySelector(`li[data-answer="${hintQuestion.correct}"]`);
+                const correctAnswerElement = document.querySelector(`li[data-answer="${hintOption.correct}"]`);
                 if (correctAnswerElement) {
                     correctAnswerElement.classList.add("correct-answer");
                     correctAnswerElement.classList.remove("incorrect-answer");
@@ -60,11 +63,12 @@ const Hints = ({ hints }) => {
             <div className='content'>
                 <div className='hint-question-section'>
                     <h2 className='question-header'>
-                        {hintQuestion.question}
+                        {hintOption.question}
                     </h2>
                     <ul>
-                        {hintQuestion.options.map((option, index) => (
-                            <li key={index} data-answer={index + 1} onClick={event => checkAnswer(event, index + 1, option.explanation)}>
+                        {hintOption.options.map((option, index) => (
+                            <li key={index} data-answer={index + 1}
+                                onClick={event => checkAnswerHintOption(event, index + 1, option.explanation, option.afterApplyingTheOption)}>
                                 {option.option}
                             </li>
                         ))}
@@ -73,7 +77,7 @@ const Hints = ({ hints }) => {
                         <button className='next' onClick={nextQuestion}>Show Next</button>
                         <button className='previous' onClick={previousQuestion}>Show Previous</button>
                     </div>
-                    <div className='index'>{hintIndex + 1} of {hints.length} Questions</div>
+                    <div className='index'>{hintIndex + 1} of {data.length} Questions</div>
                 </div>
             </div>
 

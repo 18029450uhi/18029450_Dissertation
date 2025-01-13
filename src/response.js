@@ -10,6 +10,38 @@ export const data = [
             ],
             "solution": 3
         },
+        "mcq":
+            {
+                "question":
+                    "Solve the equation: 4x + 3 = 2x + 9",
+                "options":
+                    {
+                        "A":
+                            "x = 1",
+                        "B":
+                            "x = 2",
+                        "C":
+                            "x = 3",
+                        "D":
+                            "x = 6"
+                    }
+                ,
+                "correctAnswer":
+                    "C"
+            },
+        "similarQuestionMCQ":
+            {
+                "question":
+                    "5x + 4 = 3x + 10",
+                "options": {
+                    "A": "x = 1",
+                    "B": "x = 2 ",
+                    "C": "x = 4",
+                    "D": "x = 3"
+                },
+                "correctAnswer": 3
+            }
+        ,
         "hints":
             [
                 {
@@ -84,40 +116,7 @@ export const data = [
                     ],
                     "correct": 1
                 }
-            ],
-        "similarProblem":
-            {
-                "equation":
-                    "5x + 4 = 3x + 10",
-                "steps":
-                    [
-                        "Step 1: Subtract 3x from both sides: 5x - 3x + 4 = 10",
-                        "Step 2: Simplify the equation: 2x + 4 = 10",
-                        "Step 3: Subtract 4 from both sides: 2x = 6",
-                        "Step 4: Divide both sides by 2: x = 3"
-                    ],
-                "solution": 3
-            }
-        ,
-        "mcq":
-            {
-                "question":
-                    "Solve the equation: 4x + 3 = 2x + 9",
-                "options":
-                    {
-                        "A":
-                            "x = 1",
-                        "B":
-                            "x = 2",
-                        "C":
-                            "x = 3",
-                        "D":
-                            "x = 6"
-                    }
-                ,
-                "correctAnswer":
-                    "C"
-            }
+            ]
     }
 
 ]
