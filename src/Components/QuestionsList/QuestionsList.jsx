@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './QuestionsList.css';
 
-const QuestionsList = ({ questions, onQuestionSelect }) => {
+const QuestionsList = ({questions, onQuestionSelect}) => {
     const [selectedQuestion, setSelectedQuestion] = useState(null);
 
     const handleQuestionClick = (question) => {

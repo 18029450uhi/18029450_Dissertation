@@ -35,7 +35,7 @@ const PreviousQuestionsList = ({user}) => {
     }, [user?.uid, user.email]);
 
     return (
-        <div className="question-list">
+        <div className="previous-question-list">
             <h3>Previously Solved Questions</h3>
             <ul>
                 {questions.length > 0 ? (

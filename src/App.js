@@ -11,7 +11,7 @@ import {auth, onAuthStateChanged} from './firebase-config';
 import MathSolverUploader from "./Components/Landing/MathSolverUploader";
 import {schema} from "./RestUtils/Schemas/MCQSchema";
 import {UserProvider, useUser} from './Components/UserContext';
-import PreviousQuestionsList from "./Components/PreviouslyAskedQuestions/PreviousQuestionsList"; // Import UserProvider and useUser
+import PreviousQuestionsList from "./Components/PreviouslyAskedQuestions/PreviousQuestionsList";
 
 function App() {
     const [questionData, setQuestionData] = useState(null);
@@ -52,21 +52,33 @@ function App() {
                                 <div>
                                     <div className="button-position">
                                         <Logout user={user} setUser={setUser}/>
+                                        <div className="log-banner">
+                                            <img src={`${process.env.PUBLIC_URL}/logo.svg`} alt="Log Section" style={{ height: '80px', width: '300px' }}/>
+                                        </div>
                                         <ResetButton setUser={setUser} setQuestionData={setQuestionData}/>
                                     </div>
                                     {questionData ? (
                                         <div className="main-content">
+                                            <div className="previous-questions">
+                                                <PreviousQuestionsList user={user}/>
+                                            </div>
                                             <div className='question-app'>
                                                 <Question data={questionData} user={user}/>
                                             </div>
                                             <div className='questions'>
                                                 <QuestionsList questions={questions}
                                                                onQuestionSelect={handleQuestionSelect}/>
-                                                <PreviousQuestionsList user={user}/>
                                             </div>
                                         </div>
                                     ) : (
-                                        <MathSolverUploader onUpload={handleQuestion}/>
+                                        <div className='landing-section'>
+                                            <div className='upload-answer-section'>
+                                                <MathSolverUploader onUpload={handleQuestion}/>
+                                            </div>
+                                            <div className='previous-question-list-upload-section'>
+                                                <PreviousQuestionsList user={user}/>
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             ) : (
