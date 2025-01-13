@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.similar-question .item-text {
+    border: none;
+    background: #dffff2;
+}
+
+.similar-question .item-equation {
+    border: none;
+    background: #dfe5ff;
+}
