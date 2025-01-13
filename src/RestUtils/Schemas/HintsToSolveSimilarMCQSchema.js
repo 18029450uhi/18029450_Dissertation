@@ -52,10 +52,16 @@ export const schema = {
                 },
                 required: ["A", "B", "C", "D"],
             },
+            // Need to make an object
+
             correctAnswer: {
-                type: SchemaType.STRING,
-                description: "The correct answer key (A, B, C, or D)",
+                type: SchemaType.OBJECT,
                 nullable: false,
+                description: "The correct answer key (A, B, C, or D)",
+                properties: {
+                    answer: {type: SchemaType.STRING, nullable: false},
+                    correct_equation: {type: SchemaType.STRING, nullable: false}
+                }
             },
         },
         required: ["question", "options", "correctAnswer"],

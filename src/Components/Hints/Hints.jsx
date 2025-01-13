@@ -2,12 +2,19 @@ import React, {useState, useEffect} from 'react';
 import './Hints.css';
 import Modal from "../Modal/Modal";
 
-const Hints = ({h}) => {
+const Hints = ({h, x}) => {
     const data = JSON.parse(h);
     const [hintIndex, setHintIndex] = useState(0);
     const [hintOption, setHintOption] = useState(data[hintIndex]);
     const [showExplanationModal, setShowExplanationModal] = useState(false);
     const [explanation, setExplanation] = useState('');
+
+    useEffect(() => {
+        const hintsMap = JSON.parse(localStorage.getItem("hintsMap")) || {};
+        hintsMap[x] = JSON.parse(h); // Store the key-value pair
+        localStorage.setItem("hintsMap", JSON.stringify(hintsMap));
+    }, [x, h]);
+
 
     useEffect(() => {
         setHintOption(data[hintIndex]);
@@ -21,7 +28,7 @@ const Hints = ({h}) => {
 
 
     const checkAnswerHintOption = (e, answer, explanation, afterApplyingTheOption) => {
-        if (answer === hintOption.correctAnswer) {
+        if (answer === hintOption.correctAnswer.answer) {
             e.target.classList.add("correct-answer");
             setExplanation(explanation);
             setShowExplanationModal(true);
@@ -73,6 +80,8 @@ const Hints = ({h}) => {
                     </div>
                 </div>
             </div>
+
+            {/*{hintIndex === data.length - 1 && <DataBypass q={hintSteps}/>}*/}
 
             <Modal show={showExplanationModal} onClose={() => setShowExplanationModal(false)}>
                 <p>{explanation}</p>

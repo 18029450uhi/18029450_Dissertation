@@ -14,42 +14,37 @@ import {schema} from "../../RestUtils/Schemas/HintsToSolveSimilarMCQSchema";
 //     return {__html: katex.renderToString(equation, {throwOnError: false})};
 // };
 
-// const renderText = (step) => {
-//     const parts = step.split(':');
-//     const stepText = parts.slice(0, 2).join(':') + ':';
-//     return {__html: stepText};
-// };
-
-const SimilarQuestion = (q) => {
-    const data = JSON.parse(q.q);
+const SimilarQuestion = ({ q }) => {
+    const data = JSON.parse(q);
     const [index, setIndex] = useState(0);
     const [question, setQuestion] = useState(data[index]);
     const [showHintModal, setShowHintModal] = useState(false);
-    const [showHindButton, setShowHindButton] = useState(false);
+    const [showHintButton, setShowHintButton] = useState(false);
     const [hintsOptions, setHintsOptions] = useState(null);
     const [hintButtonEnabled, setHintButtonEnabled] = useState(false);
     const [lock, setLock] = useState(false);
 
-    const hasFetchedHintsOptions = useRef(false);
+    // Track indices where hints have already been fetched
+    const fetchedIndices = useRef(new Set());
 
     const generateHintOptions = useCallback(async () => {
-        if (hasFetchedHintsOptions.current) return;
-        hasFetchedHintsOptions.current = true;
+        if (fetchedIndices.current.has(index)) return;
+        fetchedIndices.current.add(index);
 
         try {
             const prompt = `Given the following algebra question:
 
 ${question.question}
 
-Generate a series of step-by-step MCQ hints that guide the user towards the final step of solving the equation. Each hint should:
+Generate a series of step-by-step multiple-choice hints (MCQs) that guide the user toward solving the equation. Each hint must:
 
-    Present a clear question: The hint should pose a specific question related to the problem-solving process, referencing the current equation or expression.
-    Offer four plausible options: Provide four options, with one correct and three incorrect.
-    Provide informative feedback: For each option, provide a detailed explanation of why it is correct or incorrect.
-    Progress logically: Each hint should build upon the previous one, leading the user to the final step of solving the equation.
+    Pose a clear question: Each hint should present a specific question related to the problem-solving process, referencing the current equation or expression.
+    Offer four plausible options: Provide four options, with one correct answer and three plausible but incorrect ones.
+    Include informative feedback: For each option, provide a detailed explanation of why it is correct or incorrect.
+    Show updated equations: After the correct step, display the updated equation to show the progress made.
+    Progress logically: Each hint should build on the previous one, gradually leading the user toward the final solution.
 
-JSON Format:
-JSON
+Output Format
 
 {
   "hints": [
@@ -59,83 +54,107 @@ JSON
       "options": [
         {
           "option": "Option A",
-          "explanation": "Explanation for Option A (why it's incorrect)"
-          "equation_after_applying_the_current_option": "2x = 6"
+          "explanation": "Explanation for Option A (why it's incorrect)."
         },
         {
           "option": "Option B (Correct)",
-          "explanation": "Explanation for Option B (why it's correct)"
+          "explanation": "Explanation for Option B (why it's correct)."
         },
         {
           "option": "Option C",
-          "explanation": "Explanation for Option C (why it's incorrect)"
+          "explanation": "Explanation for Option C (why it's incorrect)."
         },
         {
           "option": "Option D",
-          "explanation": "Explanation for Option D (why it's incorrect)"
+          "explanation": "Explanation for Option D (why it's incorrect)."
         }
       ],
-      "correct_option": "B"
+      "correct_option": "B",
+      "updated_equation": "Updated equation after the correct step."
     },
     {
       "step": 2,
       "hint_question": "What is the next step to simplify the equation?",
       "options": [
-        // ... similar structure for options and correct answer
-      ]
+        {
+          "option": "Option A",
+          "explanation": "Explanation for Option A (why it's correct)."
+        },
+        {
+          "option": "Option B",
+          "explanation": "Explanation for Option B (why it's incorrect)."
+        },
+        {
+          "option": "Option C",
+          "explanation": "Explanation for Option C (why it's incorrect)."
+        },
+        {
+          "option": "Option D",
+          "explanation": "Explanation for Option D (why it's incorrect)."
+        }
+      ],
+      "correct_option": "A",
+      "updated_equation": "Updated equation after the correct step."
     }
-  ]
+  ],
+  "final_hint": "Now that you have the simplified equation, solve for the variable independently."
 }
 
-Use code with caution.
+Example
 
-Example:
+Question: Solve the equation 2x+5=112x+5=11.
+Step 1:
 
-Question: Solve the equation 2x + 5 = 11.
+    Hint Question: What is the first step to isolate the variable term 2x2x?
 
-Hints:
+Options:
 
-    Hint 1:
-        Hint Question: What is the first step to isolate the variable term, 2x?
-        Options:
-            A. Add 5 to both sides
-            B. Subtract 5 from both sides
-            C. Multiply both sides by 2
-            D. Divide both sides by 2
-        Correct Answer: B
-        Feedback:
-            Correct: Subtracting 5 from both sides will isolate the variable term.
-            Incorrect: The other options would either complicate the equation or lead to an incorrect result.
+    A. Add 5 to both sides
+        Explanation: Adding 5 increases the constant, which complicates the equation instead of simplifying it.
+    B. Subtract 5 from both sides (Correct)
+        Explanation: Subtracting 5 removes the constant term on the left side, helping isolate 2x2x.
+    C. Multiply both sides by 2
+        Explanation: Multiplying both sides prematurely does not simplify the equation.
+    D. Divide both sides by 2
+        Explanation: Division happens later, after isolating 2x2x.
 
-    Hint 2:
-        Hint Question: After subtracting 5 from both sides, what equation do we get?
-        Options:
-            A. 2x = 6
-            B. 2x = 16
-            C. x + 5 = 11
-            D. 2x - 5 = 11
-        Correct Answer: A
-        Feedback:
-            Correct: Subtracting 5 from both sides results in 2x = 6.
-            Incorrect: The other options are incorrect due to arithmetic errors or incorrect operations.
+Correct Option: B
+Updated Equation: 2x=62x=6
+Step 2:
 
-//After the second hint, the user will be directed back to the main question screen with the equation 2x = 6. They can then solve for x independently.`;
+    Hint Question: After subtracting 5 from both sides, what equation do we get?
+
+Options:
+
+    A. 2x=62x=6 (Correct)
+        Explanation: Subtracting 5 from 2x+5=112x+5=11 simplifies to 2x=62x=6.
+    B. 2x=162x=16
+        Explanation: This results from adding instead of subtracting.
+    C. x+5=11x+5=11
+        Explanation: This is the original equation, no steps have been taken.
+    D. 2x−5=112x−5=11
+        Explanation: This reflects an incorrect operation where subtraction was misapplied.
+
+Correct Option: A
+Updated Equation: 2x=62x=6
+Final Hint
+
+Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.` ; // Provide the appropriate prompt logic
             const result = await handleUpload(prompt, schema);
             setHintsOptions(result.response.text);
             setHintButtonEnabled(true);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error fetching hints:', error);
         }
-    }, [data]);
+    }, [index]);
 
     useEffect(() => {
-        generateHintOptions();
-    }, [generateHintOptions]);
-
+        setQuestion(data[index]); // Update the question whenever the index changes
+        generateHintOptions(); // Fetch hint options
+    }, [index, data, generateHintOptions]);
 
     const updateQuestions = () => {
         setLock(false);
-
         const answerElements = document.querySelectorAll('li[data-answer]');
         answerElements.forEach(element => {
             element.classList.remove('correct-answer', 'incorrect-answer');
@@ -145,82 +164,75 @@ Hints:
     const nextQuestion = () => {
         if (index < data.length - 1) {
             setIndex(index + 1);
-            setQuestion(data[index + 1]);
             updateQuestions();
         }
     };
 
     const previousQuestion = () => {
-        if (((index < data.length - 1) && index !== 0) || index === data.length - 1) {
+        if (index > 0) {
             setIndex(index - 1);
-            setQuestion(data[index - 1]);
             updateQuestions();
         }
     };
 
-
     const checkAnswerSimilarQuestion = (e, answer) => {
-        if (lock === false) {
+        if (!lock) {
             if (answer === question.correctAnswer) {
-                e.target.classList.add("correct-answer");
-                e.target.classList.remove("incorrect-answer");
+                e.target.classList.add('correct-answer');
             } else {
-                setShowHindButton(true);
-                e.target.classList.add("incorrect-answer");
+                setShowHintButton(true);
+                e.target.classList.add('incorrect-answer');
                 const correctAnswerElement = document.querySelector(`li[data-answer="${question.correctAnswer}"]`);
                 if (correctAnswerElement) {
-                    correctAnswerElement.classList.add("correct-answer");
-                    correctAnswerElement.classList.remove("incorrect-answer");
+                    correctAnswerElement.classList.add('correct-answer');
                 }
             }
             setLock(true);
         }
     };
+
     return (
         <div className='similar-question'>
             <h2>Similar Question</h2>
             <h2 className='question-header'>{question.question}</h2>
             <ul className='options'>
-                <li data-answer="A" className='option'
-                    onClick={event => checkAnswerSimilarQuestion(event, "A")}>{question.options.A}</li>
-                <li data-answer="B" className='option'
-                    onClick={event => checkAnswerSimilarQuestion(event, "B")}>{question.options.B}</li>
-                <li data-answer="C" className='option'
-                    onClick={event => checkAnswerSimilarQuestion(event, "C")}>{question.options.C}</li>
-                <li data-answer="D" className='option'
-                    onClick={event => checkAnswerSimilarQuestion(event, "D")}>{question.options.D}</li>
+                {Object.entries(question.options).map(([key, value]) => (
+                    <li
+                        key={key}
+                        data-answer={key}
+                        className='option'
+                        onClick={(event) => checkAnswerSimilarQuestion(event, key)}
+                    >
+                        {value}
+                    </li>
+                ))}
             </ul>
 
-            {/* Initially the */}
             <div className='buttons'>
                 <button className='next-button' onClick={nextQuestion}>Next</button>
                 <button className='previous-button' onClick={previousQuestion}>Previous</button>
             </div>
             <div className='index'>{index + 1} of {data.length} Questions</div>
-            {
-                showHindButton &&
-                <button
 
+            {showHintButton && (
+                <button
                     className='hint-button'
                     onClick={() => setShowHintModal(!showHintModal)}
                     disabled={!hintButtonEnabled}
                 >
                     Show Hint
                 </button>
-            }
-            {
-                hintsOptions && (
-                    <div className={`hint-model-section ${showHintModal ? 'show' : ''}`}>
-                        <Modal show={showHintModal} onClose={() => setShowHintModal(false)}>
-                            <Hints h={hintsOptions}/>
-                        </Modal>
-                    </div>
-                )
-            }
+            )}
 
+            {hintsOptions && (
+                <div className={`hint-modal-section ${showHintModal ? 'show' : ''}`}>
+                    <Modal show={showHintModal} onClose={() => setShowHintModal(false)}>
+                        <Hints h={hintsOptions} x={question.question} />
+                    </Modal>
+                </div>
+            )}
         </div>
-    )
-        ;
+    );
 };
 
 export default SimilarQuestion;

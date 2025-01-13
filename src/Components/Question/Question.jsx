@@ -1,7 +1,5 @@
 import React, {useState, useCallback, useRef, useEffect} from 'react';
-import {ref, set} from "firebase/database";
-// eslint-disable-next-line no-unused-vars
-import {collection, addDoc, FirestoreDataConverter} from 'firebase/firestore';
+import {ref, set, push} from "firebase/database";
 
 import './Question.css';
 import SimilarQuestion from '../SimilarQuestion/SimilarQuestion';
@@ -43,46 +41,6 @@ const Question = ({data, user}) => {
     }, [generateSimilarMCQ]);
 
     /**
-     * @typedef {Object} QuestionData
-     * @property {Object} data
-     * @property {string} data.question
-     * @property {string} data.email
-     * @property {boolean} data.isCorrect
-     */
-
-    /** @type {import('firebase/firestore').FirestoreDataConverter<QuestionData>} */
-    const questionConverter = {
-        toFirestore: (data) => data,
-        fromFirestore: (snapshot, options) => {
-            const data = snapshot.data(options);
-            return {data};
-        }
-    };
-
-    /**
-     * Posts the question data to Firestore.
-     * @param {boolean} isCorrect - Indicates if the answer is correct.
-     */
-    const postToFirestore = async (isCorrect) => {
-        /** @type {QuestionData} */
-        const subject = {
-            data: {
-                question: mcq.question,
-                isCorrect: isCorrect,
-                email: user.email
-            }
-        };
-
-        try {
-            const questionCollection = collection(db, "question").withConverter(questionConverter);
-            const d = await addDoc(questionCollection, subject);
-            console.log('Successfully posted to Firestore:', d);
-        } catch (error) {
-            console.error('Error posting to Firestore:', error);
-        }
-    };
-
-    /**
      * Posts the question data to Realtime Database.
      * @param {boolean} isCorrect - Indicates if the answer is correct.
      */
@@ -95,14 +53,14 @@ const Question = ({data, user}) => {
         console.log('Subject:', subject);
         try {
             const questionRef = ref(db, 'questions/' + user.uid);
-            await set(questionRef, subject);
+            const newQuestionRef = push(questionRef);
+            await set(newQuestionRef, subject);
             console.log('Successfully posted to Realtime Database:', subject);
         } catch (error) {
             console.error('Error posting to Realtime Database:', error);
         }
     }
 
-    
 
     const handleImageUpload = async (event) => {
         setResultMessage('');

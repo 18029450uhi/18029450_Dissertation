@@ -4,7 +4,10 @@
 }
 
 body {
-    height: 100vh;
-    background-image: linear-gradient(#61dafb, #282c34);
-    font-family: 'poppins';
+    min-height: 100vh; /* Automatically adjusts based on content height */
+    background-image: url('../public/pexels-katerina-holmes-5905610.jpg'); /* Replace 'your-image-path.jpg' with the path to your image */
+    background-size: cover; /* Ensures the image covers the entire area */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    font-family: 'Poppins', sans-serif; /* Updated to include fallback font */
 }

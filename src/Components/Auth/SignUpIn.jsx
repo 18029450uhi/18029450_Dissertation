@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, provider, signInWithPopup, signOut } from '../../firebase-config';
+import './Auth.css'
 
 function SignUpIn({ setUser }) {
     const [signUp, setSignUp] = useState(false);
@@ -33,7 +34,7 @@ function SignUpIn({ setUser }) {
                     {!signUp ? <h1 className="text-center">Sign in</h1> : <h1 className="text-center">Sign up</h1>}
                 </div>
                 <div className="d-grid gap-2">
-                    <button type="button" onClick={handleGoogleSignIn} className="btn btn-secondary">Sign in with Google</button>
+                    <button type="button" onClick={handleGoogleSignIn} className="btn btn-secondary general">Sign in with Google</button>
                 </div>
                 <div className="row mt-3">
                     <div className="btn-group" role="group" aria-label="Basic radio toggle button group">

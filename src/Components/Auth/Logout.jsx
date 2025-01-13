@@ -14,7 +14,7 @@ const Logout = ({ user, setUser }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const questionRef = query(ref(db, "questions"), orderByChild("email"), equalTo(user.email));
+            const questionRef = query(ref(db, `questions/${user.uid}`), orderByChild("email"), equalTo(user.email));
             const snapshot = await get(questionRef);
             let correct = 0;
             let wrong = 0;
@@ -30,8 +30,10 @@ const Logout = ({ user, setUser }) => {
             setWrongCount(wrong);
         };
 
-        fetchData().then(() => console.log('Data fetched'));
-    }, [user.email]);
+        if (user) {
+            fetchData().then(() => console.log('Data fetched'));
+        }
+    }, [user]);
 
     const handleLogout = async () => {
         try {

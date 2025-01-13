@@ -18,12 +18,13 @@ import {
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "YOUR_Firebase_KEY",
-    authDomain: "math-question-90677.firebaseapp.com",
-    projectId: "math-question-90677",
-    storageBucket: "math-question-90677.appspot.com",
-    messagingSenderId: "688978502550",
-    appId: "1:688978502550:web:9133b727ac7f9786de73b7",
-    measurementId: "G-M4ZZKLXCCR"
+    authDomain: "fir-clients-fabb0.firebaseapp.com",
+    databaseURL: "https://fir-clients-fabb0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "fir-clients-fabb0",
+    storageBucket: "fir-clients-fabb0.firebasestorage.app",
+    messagingSenderId: "458902321381",
+    appId: "1:458902321381:web:23e72c094735fa92373c0c",
+    measurementId: "G-QD4VE5HH5R"
 };
 
 
