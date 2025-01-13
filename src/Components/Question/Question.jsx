@@ -5,43 +5,47 @@ import SimilarQuestion from '../SimilarQuestion/SimilarQuestion';
 import Hints from '../Hints/Hints';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
+import Modal from "../Model/Modal";
 
 const renderEquation = (step) => {
     const parts = step.split(':');
     const equation = parts.length > 1 ? parts.slice(1).join(':').trim() : step;
     return {__html: katex.renderToString(equation, {throwOnError: false})};
 };
+
 const capitalizeFirstLetter = (text) => {
     return text.replace(/\b\w/g, char => char.toUpperCase());
 };
+
 const renderText = (step) => {
     const parts = step.split(':');
     const stepText = parts.slice(0, 1).join(':') + ':';
     return {__html: capitalizeFirstLetter(stepText)};
 };
+
 const Question = () => {
-    let [index, setIndex] = useState(0);
-    let [question, setQuestion] = useState(data[index]);
-    let [showHint, setShowHint] = useState(false);
-    let [lock, setLock] = useState(false);
+    const [index, setIndex] = useState(0);
+    const [question, setQuestion] = useState(data[index]);
+    const [showHint, setShowHint] = useState(false);
+    const [showHintModal, setShowHintModal] = useState(false);
+    const [showSimilarQuestionModal, setShowSimilarQuestionModal] = useState(false);
+    const [lock, setLock] = useState(false);
 
+    const updateQuestions = () => {
+        setShowHint(false);
+        setLock(false);
 
-    function updateQuestions() {
-        setShowHint(false); // Reset hint visibility for the next question
-        setLock(false); // Reset lock state for the next question
-
-        // Remove classes from previous question's answers
         const answerElements = document.querySelectorAll('li[data-answer]');
         answerElements.forEach(element => {
             element.classList.remove('correct-answer', 'incorrect-answer');
         });
-    }
+    };
 
     const nextQuestion = () => {
         if (index < data.length - 1) {
             setIndex(index + 1);
             setQuestion(data[index + 1]);
-            updateQuestions()
+            updateQuestions();
         }
     };
 
@@ -49,23 +53,20 @@ const Question = () => {
         if (((index < data.length - 1) && index !== 0) || index === data.length - 1) {
             setIndex(index - 1);
             setQuestion(data[index - 1]);
-            updateQuestions()
+            updateQuestions();
         }
     };
-
 
     const toggleHint = () => {
         setShowHint(!showHint);
     };
 
-    // By locking user can select only one answer
     const checkAnswer = (e, answer) => {
         if (lock === false) {
             if (answer === question.mcq.correctAnswer) {
                 e.target.classList.add("correct-answer");
             } else {
                 e.target.classList.add("incorrect-answer");
-                // Highlight the correct answer
                 const correctAnswerElement = document.querySelector(`li[data-answer="${question.mcq.correctAnswer}"]`);
                 if (correctAnswerElement) {
                     correctAnswerElement.classList.add("correct-answer");
@@ -93,18 +94,25 @@ const Question = () => {
                         <li data-answer="D" onClick={event => checkAnswer(event, "D")}
                             dangerouslySetInnerHTML={renderEquation(question.mcq.options.D)}></li>
                     </ul>
-                    <div className='bottons'>
+                    <div className='buttons'>
                         <button className='next-button' onClick={nextQuestion}>Next</button>
                         <button className='previous-button' onClick={previousQuestion}>Previous</button>
                     </div>
                     <div className='index'>{index + 1} of {data.length} Questions</div>
-                    <button className='hint-button' onClick={toggleHint}>{showHint ? 'Hide Hint' : 'Show Hint'}</button>
-                    {showHint && <Hints steps={question.originalProblem.steps}/>}
-                </div>
-                <div className='similar-question-section'>
-                    <SimilarQuestion similarProblem={question.similarProblem}/>
+                    <button className='hint-button' onClick={() => setShowHintModal(true)}>Show Hint</button>
+                    <button className='similar-question-button'
+                            onClick={() => setShowSimilarQuestionModal(true)}>Similar Question
+                    </button>
                 </div>
             </div>
+
+            <Modal show={showHintModal} onClose={() => setShowHintModal(false)}>
+                <Hints steps={question.originalProblem.steps}/>
+            </Modal>
+
+            <Modal show={showSimilarQuestionModal} onClose={() => setShowSimilarQuestionModal(false)}>
+                <SimilarQuestion similarProblem={question.similarProblem}/>
+            </Modal>
         </div>
     );
 };
