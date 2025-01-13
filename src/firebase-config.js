@@ -1,7 +1,16 @@
 // Import the functions you need from the SDKs you need
 import {initializeApp} from "firebase/app";
 import {getAnalytics} from "firebase/analytics";
-import {getAuth, GoogleAuthProvider, signInWithPopup, signOut, signInWithRedirect} from 'firebase/auth';
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    signInWithRedirect,
+    setPersistence,
+    browserLocalPersistence,
+    onAuthStateChanged
+} from 'firebase/auth';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -21,5 +30,10 @@ const provider = new GoogleAuthProvider();
 const signInWithGoogleRedirect = () => signInWithRedirect(auth, provider);
 const analytics = getAnalytics(app);
 
-export {auth, provider, signInWithGoogleRedirect, analytics, signInWithPopup, signOut};
-// Initialize Firebase
+setPersistence(auth, browserLocalPersistence).then(() =>
+    console.log('Local persistence set')
+).catch((error) =>
+    console.error('Error setting local persistence:', error)
+);
+
+export {auth, provider, signInWithPopup, signOut, onAuthStateChanged};

@@ -6,8 +6,14 @@ const Modal = ({ show, onClose, children }) => {
         return null;
     }
 
+    const handleOverlayClick = (e) => {
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleOverlayClick}>
             <div className="modal">
                 <button className="close-button" onClick={onClose}>X</button>
                 <div className="modal-content">

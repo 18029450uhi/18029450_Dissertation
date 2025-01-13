@@ -4,6 +4,7 @@ import Modal from "../Modal/Modal";
 
 const Hints = ({h}) => {
     const data = JSON.parse(h);
+    console.log(data)
     const [hintIndex, setHintIndex] = useState(0);
     const [hintOption, setHintOption] = useState(data[hintIndex]);
     const [showExplanationModal, setShowExplanationModal] = useState(false);
