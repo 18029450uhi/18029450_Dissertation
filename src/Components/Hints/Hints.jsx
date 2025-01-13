@@ -61,6 +61,7 @@ const Hints = ({h}) => {
                                 key={index}
                                 className={`dot ${index === hintIndex ? 'active' : ''}`}
                                 onClick={() => {
+                                    clearCheckedMarks();
                                     setHintIndex(index);
                                 }}
                             ></span>
