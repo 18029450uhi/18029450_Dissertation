@@ -106,14 +106,17 @@
 
     .question-app {
         order: 1;
+        width: 100%;
     }
 
     .questions {
         order: 2;
+        width: 100%;
     }
 
     .previous-questions {
         order: 3;
+        width: 100%;
     }
 
 }
