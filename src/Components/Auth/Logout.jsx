@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { ref, query, orderByChild, equalTo, get } from "firebase/database";
+import {ref, query, orderByChild, equalTo, get} from "firebase/database";
 
 import {auth, signOut} from '../../firebase-config';
 import UserModal from '../Modal/UserModal';
@@ -7,13 +7,16 @@ import UserModal from '../Modal/UserModal';
 import {db} from '../../firebase-config';
 import './Auth.css'
 
-const Logout = ({ user, setUser }) => {
+const Logout = ({user, setUser}) => {
     const [showModal, setShowModal] = useState(false);
     const [correctCount, setCorrectCount] = useState(0);
     const [wrongCount, setWrongCount] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!user) return;
+            if (!user.uid) return;
+            if (!user.email) return;
             const questionRef = query(ref(db, `questions/${user.uid}`), orderByChild("email"), equalTo(user.email));
             const snapshot = await get(questionRef);
             let correct = 0;
@@ -33,7 +36,7 @@ const Logout = ({ user, setUser }) => {
         if (user) {
             fetchData().then(() => console.log('Data fetched'));
         }
-    }, [user]);
+    }, [showModal]);
 
     const handleLogout = async () => {
         try {
