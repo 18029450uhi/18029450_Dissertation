@@ -1,23 +1,16 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import './SimilarQuestion.css';
-import katex from 'katex';
 import 'katex/dist/katex.min.css';
-// import {data} from '/Users/amir/WebstormProjects/question-app/src/response.js';
 import Modal from "../Modal/Modal";
 import Hints from "../Hints/Hints";
 import {handleUpload} from "../../RestUtils/GetFromGemini";
 import {schema} from "../../RestUtils/Schemas/HintsToSolveSimilarMCQSchema";
 
-// const renderEquation = (step) => {
-//     const parts = step.split(':');
-//     const equation = parts.length > 2 ? parts.slice(2).join(':').trim() : step;
-//     return {__html: katex.renderToString(equation, {throwOnError: false})};
-// };
 
 const SimilarQuestion = ({q}) => {
     const data = JSON.parse(q);
     const [index, setIndex] = useState(0);
-    const [hintSteps, setHindSteps] = useState(["Step 1: Add 5 to both sides to isolate the variable term 2x.", "Step 2: After subtracting 5 from both sides, the equation simplifies to 2x=6.", "Step 3: Divide both sides by 2 to solve for the variable x."]);
+    const [hintSteps, setHindSteps] = useState([]);
     const [isViewedHint, setIsViewedHint] = useState(false);
     const [question, setQuestion] = useState(data[index]);
     const [showHintModal, setShowHintModal] = useState(false);
@@ -144,13 +137,22 @@ Final Hint
 Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; // Provide the appropriate prompt logic
             const result = await handleUpload(prompt, schema);
             setHintsOptions(result.response.text);
-            setHintButtonEnabled(true);
+            setShowHintButton(false);
+            setHintButtonEnabled(false);
         } catch (error) {
             console.error('Error fetching hints:', error);
         }
-    }, [index]);
+    }, [data, index]);
+
+    const clearAllSelections = () => {
+        const answerElements = document.querySelectorAll('li[data-answer]');
+        answerElements.forEach(element => {
+            element.classList.remove('correct-answer', 'incorrect-answer');
+        });
+    }
 
     useEffect(() => {
+
         setQuestion(data[index]); // Update the question whenever the index changes
 
         const hintsMapString = localStorage.getItem("hintsMap");
@@ -170,23 +172,28 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
             setHintsOptions(hintsMap[questionKey]);
             setHintButtonEnabled(true);
         } else {
-            setHintButtonEnabled(false);
             generateHintOptions();
         }
-        if (hintsOptions) {
-            setHintButtonEnabled(true);
-        }
-    }, [index, data, generateHintOptions, question.question]);
+
+    }, [data, index, generateHintOptions]);
     const updateQuestions = () => {
         setLock(false);
-        const answerElements = document.querySelectorAll('li[data-answer]');
-        answerElements.forEach(element => {
-            element.classList.remove('correct-answer', 'incorrect-answer');
-        });
+        clearAllSelections();
     };
 
+    const updateHintsStep = (hintsOptions) => {
+        const parsedHints = JSON.parse(hintsOptions);
+        const hintIndexes = JSON.parse(localStorage.getItem("hintIndexes")) || {};
+        const length = hintIndexes[question.question];
+        const steps = [];
+        for (let i = 0; i < length + 1; i++) {
+            steps.push(parsedHints[i].correctAnswer.correct_equation);
+        }
+        setHindSteps(steps);
+    };
     const nextQuestion = () => {
         setIsViewedHint(false);
+        setHindSteps([]);
         setShowHintButton(false);
         setHintsOptions(null);
         if (index < data.length - 1) {
@@ -197,6 +204,7 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
 
     const previousQuestion = () => {
         setIsViewedHint(false);
+        setHindSteps([]);
         setShowHintButton(false);
         if (index > 0) {
             setIndex(index - 1);
@@ -264,6 +272,7 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
                 <div className={`hint-modal-section ${showHintModal ? 'show' : ''}`}>
                     <Modal show={showHintModal} onClose={() => {
                         setShowHintModal(false);
+                        updateHintsStep(hintsOptions);
                         setIsViewedHint(true)
                     }}>
                         <Hints h={hintsOptions} x={question.question}/>

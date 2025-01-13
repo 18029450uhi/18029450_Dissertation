@@ -53,8 +53,14 @@ function App() {
                                 </div>
                                 {questionData ? (
                                     <div className="main-content">
-                                        <Question data={questionData} user={user}/>
-                                        <QuestionsList questions={questions} onQuestionSelect={handleQuestionSelect}/>
+                                        <div className='question-app'>
+                                            <Question data={questionData} user={user}/>
+                                        </div>
+                                        <div className='questions'>
+                                            <QuestionsList questions={questions}
+                                                           onQuestionSelect={handleQuestionSelect}/>
+                                        </div>
+
                                     </div>
                                 ) : (
                                     <MathSolverUploader onUpload={handleQuestion}/>

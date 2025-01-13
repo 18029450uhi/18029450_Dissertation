@@ -1,0 +1,23 @@
+.question-list {
+    width: 80%;
+    margin: 10% auto;
+    background: white;
+    color: #282c34;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    padding: 2%;
+    gap: 1%;
+}
+
+.question-list ul li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1%;
+    border: 1px solid #686868;
+    border-radius: 10px;
+    margin-bottom: 1%;
+    cursor: pointer;
+}

@@ -72,6 +72,9 @@ const Hints = ({h, x}) => {
                                 onClick={() => {
                                     clearCheckedMarks();
                                     setHintIndex(index);
+                                    const hintIndexes = JSON.parse(localStorage.getItem("hintIndexes")) || {};
+                                    hintIndexes[x] = Math.max(hintIndex + 1, hintIndexes[x] || 0); // Store the key-value pair
+                                    localStorage.setItem("hintIndexes", JSON.stringify(hintIndexes));
                                 }}
                             ></span>
                         ))}

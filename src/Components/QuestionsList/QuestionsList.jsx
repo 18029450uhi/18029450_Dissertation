@@ -1,6 +1,7 @@
 import React from 'react';
+import './QuestionsList.css';
 
-const QuestionsList = ({ questions, onQuestionSelect }) => {
+const QuestionsList = ({questions, onQuestionSelect}) => {
     return (
         <div className='question-list'>
             <h3>Questions</h3>

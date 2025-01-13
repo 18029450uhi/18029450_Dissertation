@@ -41,3 +41,21 @@
     display: flex;
     justify-content: space-between;
 }
+
+.main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Ensures alignment at the top */
+    gap: 1rem; /* Adds space between sections */
+}
+
+.question-app {
+    flex: 1; /* Makes it take up available space */
+    max-width: 100%; /* Optional: Restrict maximum width */
+}
+
+.questions {
+    flex: 0 0 30%; /* Fixes the width to 30% */
+    width: 100%;
+    overflow-y: auto; /* Handles overflow content */
+}
