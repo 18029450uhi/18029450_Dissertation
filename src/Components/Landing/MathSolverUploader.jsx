@@ -36,9 +36,21 @@ const MathSolverUploader = ({onUpload}) => {
                     "\n" +
                     "    Error Handling:\n" +
                     "        If no algebraic content is detected, respond with: 'No algebraic problems, equations, or mathematical expressions found in the input. Please upload a relevant question", imageSchema))
-                const prompt = `You are a helpful math tutor. Guide the user through the solution step by step. Generate MCQs for the user based on the this ${text[0].question} question?`;
+
+                if (!text.isValidFile) {
+                    alert("The uploaded file is not valid. Please upload a valid image.");
+                    return;
+                }
+
+                if (!text.isContainAlgebraQuestion) {
+                    alert("The uploaded image does not contain an algebra question. Please upload a relevant image.");
+                    return;
+                }
+
+
+                const prompt = `You are a helpful math tutor. Guide the user through the solution step by step. Generate MCQs for the user based on the this ${text.questions[0].question} question?`;
                 const result = await handleUpload(prompt, schema);
-                onUpload(result.response.text, text);
+                onUpload(result.response.text, text.questions);
 
             } catch (error) {
                 console.error('Error:', error);

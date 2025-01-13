@@ -11,10 +11,10 @@ export async function handleUpload(prompt, schema) {
     try {
         // Generate content using Google Generative AI
         // It is recommended to use the API key as an environment variable
-        const genAI = new GoogleGenerativeAI("AIzaSyDzEGjWICyC373PK5lXbd6g_83B8fNACBQ");
+        const genAI = new GoogleGenerativeAI("YOUR_Gemini_KEY");
 
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-pro",
+            model: "gemini-1.5-flash",
             generationConfig: {
                 responseMimeType: "application/json",
                 responseSchema: schema,

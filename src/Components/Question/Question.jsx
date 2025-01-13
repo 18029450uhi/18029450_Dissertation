@@ -83,7 +83,7 @@ const Question = ({data, user}) => {
         const file = event.target.files[0];
         if (file) {
             try {
-                const prompt = "Analyze the provided image or document encoded in Base64 format. Perform the following tasks step-by-step:\n" +
+                const prompt =`Analyze the provided image or document encoded in Base64 format. Perform the following tasks step-by-step:\n" +
                     "\n" +
                     "    Blank or Unreadable Check:\n" +
                     "        Verify if the input is blank, blurry, or unreadable.\n" +
@@ -104,14 +104,30 @@ const Question = ({data, user}) => {
                     "    Complexity Evaluation:\n" +
                     "        If detected equations exceed GCSE-level complexity, respond with: 'The detected content may require higher-level mathematics processing. Proceeding with interpretation.'\n" +
                     "\n" +
-                    "    Error Handling:\n" +
-                    "        If no algebraic content is detected, respond with: 'No algebraic problems, equations, or mathematical expressions found in the input. Please upload a relevant question.Check if the answer is correct or not. Check if the steps by steps given by the user correct or not.";
+                            Verify if the user-provided answer is for the equation ${mcq.question}.
+        If the answer is correct for ${mcq.question}, respond with: "The provided answer for the equation ${mcq.question} is correct."
+        If the answer is incorrect for ${mcq.question}, respond with: "The provided answer for the equation ${mcq.question} is incorrect. Please review your steps and try again."
+    Error Handling:
+        If no algebraic content is detected or if the steps are invalid, respond with: "No algebraic problems, equations, or mathematical expressions found in the input. Please upload a relevant question."
 
-                const result = await getVerifyAnswer(file, prompt, verifyAnswerSchema);
-                const isCorrect = JSON.parse(result).isCorrect;
-                setResultMessage(isCorrect ? "Congratulations! You have done it." : "You got it wrong.");
+
+                    "    Error Handling:\n" +
+                    "        If no algebraic content is detected, respond with: 'No algebraic problems, equations, or mathematical expressions found in the input. Please upload a relevant question. If the user includes step-by-step reasoning for their solution, evaluate whether the steps are mathematically valid and correctly follow the solution process for ${mcq.question}.
+         Respond with: 'The steps provided for the equation ${mcq.question} are correct.' or 'The steps provided for the equation ${mcq.question} are incorrect. Please review your approach and ensure all steps follow the proper algebraic methods.`;
+                const result = JSON.parse(await getVerifyAnswer(file, prompt, verifyAnswerSchema));
+                if (!result.isValidFile) {
+                    alert("The uploaded file is not valid. Please upload a valid image.");
+                    return;
+                }
+
+                if (!result.isContainAlgebraQuestion) {
+                    alert("The uploaded image does not contain an algebra question. Please upload a relevant image.");
+                    return;
+                }
+
+                setResultMessage(result.isCorrect ? "Congratulations! You have done it." : "You got it wrong.");
                 setShowResultModal(true);
-                await postToRealtimeDatabase(isCorrect);
+                await postToRealtimeDatabase(result.isCorrect);
             } catch (error) {
                 console.error("Error verifying answer:", error);
             }
@@ -127,9 +143,8 @@ const Question = ({data, user}) => {
                     <h2 className="question-header">{mcq.question}</h2>
                     <div className="content-button">
                         <button
-                            className="similar-question-button"
+                            className={`similar-question-button ${!similarButtonEnabled ? "enabled" : ""}`}
                             onClick={() => setShowSimilarQuestionModal(!showSimilarQuestionModal)}
-                            disabled={!similarButtonEnabled}
                         >
                             Similar Question
                         </button>
