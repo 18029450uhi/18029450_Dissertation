@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
-
+import './Auth.css'
 function ResetButton({setUser, setQuestionData}) {
     const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ function ResetButton({setUser, setQuestionData}) {
 
     return (
         <div>
-            <button onClick={handleReset}>Reset</button>
+            <button className='general' onClick={handleReset}>Reset</button>
         </div>
     );
 }

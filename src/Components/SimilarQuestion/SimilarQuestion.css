@@ -19,6 +19,59 @@
     background: #dfe5ff;
 }
 
+.options {
+    display: flex;
+    flex-direction: row;
+}
+
+.options .option {
+    flex: 100%;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 0!important;
+}
+
+.next-button {
+    flex: 100%;
+    margin: auto;
+    width: 200px;
+    height: 30px;
+    background: #93a2ef;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.previous-button {
+    flex: 100%;
+    margin: auto;
+    width: 200px;
+    height: 30px;
+    background: #93a2ef;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.hint-button {
+    margin: auto;
+    width: 150px;
+    height: 25px;
+    background: #ff0000;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .hint-model-section {
     display: none; /* Initially hide the section */
     width: 100%; /* Set a fixed width */

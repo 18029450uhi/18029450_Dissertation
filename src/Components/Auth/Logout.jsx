@@ -1,24 +1,26 @@
 import React, {useState, useEffect} from 'react';
+import { ref, query, orderByChild, equalTo, get } from "firebase/database";
+
 import {auth, signOut} from '../../firebase-config';
 import UserModal from '../Modal/UserModal';
-import {collection, query, where, getDocs} from 'firebase/firestore';
+// import {collection, query, where, getDocs} from 'firebase/firestore';
 import {db} from '../../firebase-config';
+import './Auth.css'
 
-const Logout = ({user, setUser}) => {
+const Logout = ({ user, setUser }) => {
     const [showModal, setShowModal] = useState(false);
     const [correctCount, setCorrectCount] = useState(0);
     const [wrongCount, setWrongCount] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
-            const q = query(collection(db, "question"), where("data.email", "==", user.email));
-            const querySnapshot = await getDocs(q);
+            const questionRef = query(ref(db, "questions"), orderByChild("email"), equalTo(user.email));
+            const snapshot = await get(questionRef);
             let correct = 0;
             let wrong = 0;
-            querySnapshot.forEach((doc) => {
-                console.log(doc.data().data)
-                console.log(user.email)
-                if (doc.data().data.isCorrect) {
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                if (data.isCorrect) {
                     correct++;
                 } else {
                     wrong++;
@@ -28,7 +30,7 @@ const Logout = ({user, setUser}) => {
             setWrongCount(wrong);
         };
 
-        fetchData();
+        fetchData().then(() => console.log('Data fetched'));
     }, [user.email]);
 
     const handleLogout = async () => {
@@ -42,7 +44,7 @@ const Logout = ({user, setUser}) => {
 
     return (
         <div>
-            <button onClick={() => setShowModal(true)}>{user.displayName}</button>
+            <button className='general' onClick={() => setShowModal(true)}>{user.displayName}</button>
             {showModal && (
                 <UserModal
                     correctCount={correctCount}

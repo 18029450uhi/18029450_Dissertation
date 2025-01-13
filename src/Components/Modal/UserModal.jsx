@@ -9,7 +9,7 @@ const UserModal = ({ correctCount, wrongCount, onClose, onLogout }) => {
                 <div className="modal-content">
                     <p>Total Correct Answers: {correctCount}</p>
                     <p>Total Wrong Answers: {wrongCount}</p>
-                    <button onClick={onLogout}>Logout</button>
+                    <button className='general' onClick={onLogout}>Logout</button>
                 </div>
             </div>
         </div>

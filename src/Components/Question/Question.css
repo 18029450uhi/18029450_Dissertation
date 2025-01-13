@@ -56,57 +56,22 @@
 
 }
 
-.container .next-button {
-    margin: auto;
-    width: 200px;
-    height: 30px;
-    background: #8f9def;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.container .previous-button {
-    margin: auto;
-    width: 200px;
-    height: 30px;
-    background: #93a2ef;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.container .hint-button {
-    margin: auto;
-    width: 150px;
-    height: 25px;
-    background: #ff0000;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 5px;
-    cursor: pointer;
-}
 
 .container .upload-answer {
-    width: 150px;
-    height: 25px;
-    background: #0e9629;
+    width: 170px;
+    height: 30px;
+    background: #049f20;
+    border-radius: 5px;
     color: #ffffff;
     font-size: 15px;
     font-weight: 500;
-    border-radius: 5px;
     cursor: pointer;
     float: right;
 }
 
 .container .similar-question-button {
-    width: 150px;
-    height: 25px;
+    width: 170px;
+    height: 30px;
     background: #818080;
     color: #ffffff;
     font-size: 15px;
@@ -145,6 +110,10 @@
     background: #ffdede;
     border-color: #ff0000;
 
+}
+
+.question-section {
+    margin-bottom: 05%;
 }
 
 

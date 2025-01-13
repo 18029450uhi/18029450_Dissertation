@@ -1,17 +1,23 @@
-import React, {useEffect, useState, useCallback, useRef} from 'react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
+import {ref, set} from "firebase/database";
+// eslint-disable-next-line no-unused-vars
+import {collection, addDoc, FirestoreDataConverter} from 'firebase/firestore';
+
 import './Question.css';
 import SimilarQuestion from '../SimilarQuestion/SimilarQuestion';
-import {handleUpload} from "../../RestUtils/GetFromGemini";
-import {schema} from "../../RestUtils/Schemas/SimilarMCQSchema";
+import ResultModal from '../Modal/ResultModal';
+import {handleUpload, getVerifyAnswer} from "../../RestUtils/GetFromGemini";
+import {schema as similarMCQSchema} from "../../RestUtils/Schemas/SimilarMCQSchema";
+import {schema as verifyAnswerSchema} from "../../RestUtils/Schemas/VarifyAnswerSchema";
 import {db} from "../../firebase-config";
-import {collection, addDoc} from 'firebase/firestore';
 
 const Question = ({data, user}) => {
     const mcq = JSON.parse(data);
     const [similarMCQ, setSimilarMCQ] = useState(null);
     const [showSimilarQuestionModal, setShowSimilarQuestionModal] = useState(false);
-    const [lock, setLock] = useState(false);
     const [similarButtonEnabled, setSimilarButtonEnabled] = useState(false);
+    const [showResultModal, setShowResultModal] = useState(false);
+    const [resultMessage, setResultMessage] = useState('');
     const hasFetchedSimilarMCQ = useRef(false);
 
     const generateSimilarMCQ = useCallback(async () => {
@@ -24,7 +30,7 @@ const Question = ({data, user}) => {
                 * The generated MCQs must be mathematically correct and solvable.
                 * The incorrect options should be plausible distractors, not obviously wrong.
                 * The level of difficulty should be consistent with the original MCQ.`;
-            const result = await handleUpload(prompt, schema);
+            const result = await handleUpload(prompt, similarMCQSchema);
             setSimilarMCQ(result.response.text);
             setSimilarButtonEnabled(true);
         } catch (error) {
@@ -36,41 +42,85 @@ const Question = ({data, user}) => {
         generateSimilarMCQ();
     }, [generateSimilarMCQ]);
 
-    const postToFirestore = async (subject) => {
+    /**
+     * @typedef {Object} QuestionData
+     * @property {Object} data
+     * @property {string} data.question
+     * @property {string} data.email
+     * @property {boolean} data.isCorrect
+     */
+
+    /** @type {import('firebase/firestore').FirestoreDataConverter<QuestionData>} */
+    const questionConverter = {
+        toFirestore: (data) => data,
+        fromFirestore: (snapshot, options) => {
+            const data = snapshot.data(options);
+            return {data};
+        }
+    };
+
+    /**
+     * Posts the question data to Firestore.
+     * @param {boolean} isCorrect - Indicates if the answer is correct.
+     */
+    const postToFirestore = async (isCorrect) => {
+        /** @type {QuestionData} */
+        const subject = {
+            data: {
+                question: mcq.question,
+                isCorrect: isCorrect,
+                email: user.email
+            }
+        };
+
         try {
-            await addDoc(collection(db, "question"), subject);
+            const questionCollection = collection(db, "question").withConverter(questionConverter);
+            const d = await addDoc(questionCollection, subject);
+            console.log('Successfully posted to Firestore:', d);
         } catch (error) {
             console.error('Error posting to Firestore:', error);
         }
     };
 
-    const checkAnswer = (e, answer) => {
-        if (!lock) {
-            const isCorrect = answer === mcq.correctAnswer;
-            const subject = {
-                data: {
-                    question: mcq.question,
-                    isCorrect: isCorrect,
-                    email: user.email
-                }
-            };
+    /**
+     * Posts the question data to Realtime Database.
+     * @param {boolean} isCorrect - Indicates if the answer is correct.
+     */
+    async function postToRealtimeDatabase(isCorrect) {
+        const subject = {
+            question: mcq.question,
+            isCorrect: isCorrect,
+            email: user.email
+        };
+        console.log('Subject:', subject);
+        try {
+            const questionRef = ref(db, 'questions/' + user.uid);
+            await set(questionRef, subject);
+            console.log('Successfully posted to Realtime Database:', subject);
+        } catch (error) {
+            console.error('Error posting to Realtime Database:', error);
+        }
+    }
 
-            postToFirestore(subject);
+    
 
-            if (isCorrect) {
-                e.target.classList.add("correct-answer");
-                e.target.classList.remove("incorrect-answer");
-            } else {
-                e.target.classList.add("incorrect-answer");
-                const correctAnswerElement = document.querySelector(`li[data-answer="${mcq.correctAnswer}"]`);
-                if (correctAnswerElement) {
-                    correctAnswerElement.classList.add("correct-answer");
-                    correctAnswerElement.classList.remove("incorrect-answer");
-                }
+    const handleImageUpload = async (event) => {
+        setResultMessage('');
+        const file = event.target.files[0];
+        if (file) {
+            try {
+                const prompt = "Verify the answer";
+                const result = await getVerifyAnswer(file, prompt, verifyAnswerSchema);
+                const isCorrect = JSON.parse(result).isCorrect;
+                setResultMessage(isCorrect ? 'Congratulations! You have done it.' : 'You got it wrong.');
+                setShowResultModal(true);
+                await postToRealtimeDatabase(isCorrect);
+            } catch (error) {
+                console.error('Error:', error);
             }
-            setLock(true);
         }
     };
+
 
     return (
         <div className='container'>
@@ -79,12 +129,6 @@ const Question = ({data, user}) => {
                 <hr/>
                 <div className='content'>
                     <h2 className='question-header'>{mcq.question}</h2>
-                    {/*<ul>*/}
-                    {/*    <li data-answer="A" onClick={event => checkAnswer(event, "A")}>{mcq.options.A}</li>*/}
-                    {/*    <li data-answer="B" onClick={event => checkAnswer(event, "B")}>{mcq.options.B}</li>*/}
-                    {/*    <li data-answer="C" onClick={event => checkAnswer(event, "C")}>{mcq.options.C}</li>*/}
-                    {/*    <li data-answer="D" onClick={event => checkAnswer(event, "D")}>{mcq.options.D}</li>*/}
-                    {/*</ul>*/}
                     <div className='content-button'>
                         <button
                             className='similar-question-button'
@@ -93,10 +137,8 @@ const Question = ({data, user}) => {
                         >
                             Similar Question
                         </button>
-                        {/*Based on the Gemini Response user will view a popup Model with Message like "You got it wrong" or "Congratulation! you have done it"*/}
-                        <input className='upload-answer' type="file" accept="image/*"/>
+                        <input className='upload-answer' type="file" accept="image/*" onChange={handleImageUpload}/>
                     </div>
-
                 </div>
             </div>
             {similarMCQ && (
@@ -104,6 +146,11 @@ const Question = ({data, user}) => {
                     <SimilarQuestion q={similarMCQ}/>
                 </div>
             )}
+            <ResultModal
+                show={showResultModal}
+                message={resultMessage}
+                onClose={() => setShowResultModal(false)}
+            />
         </div>
     );
 };

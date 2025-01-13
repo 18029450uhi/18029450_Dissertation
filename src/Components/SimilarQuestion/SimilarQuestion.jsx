@@ -25,6 +25,7 @@ const SimilarQuestion = (q) => {
     const [index, setIndex] = useState(0);
     const [question, setQuestion] = useState(data[index]);
     const [showHintModal, setShowHintModal] = useState(false);
+    const [showHindButton, setShowHindButton] = useState(false);
     const [hintsOptions, setHintsOptions] = useState(null);
     const [hintButtonEnabled, setHintButtonEnabled] = useState(false);
     const [lock, setLock] = useState(false);
@@ -164,6 +165,7 @@ Hints:
                 e.target.classList.add("correct-answer");
                 e.target.classList.remove("incorrect-answer");
             } else {
+                setShowHindButton(true);
                 e.target.classList.add("incorrect-answer");
                 const correctAnswerElement = document.querySelector(`li[data-answer="${question.correctAnswer}"]`);
                 if (correctAnswerElement) {
@@ -178,14 +180,14 @@ Hints:
         <div className='similar-question'>
             <h2>Similar Question</h2>
             <h2 className='question-header'>{question.question}</h2>
-            <ul>
-                <li data-answer="A"
+            <ul className='options'>
+                <li data-answer="A" className='option'
                     onClick={event => checkAnswerSimilarQuestion(event, "A")}>{question.options.A}</li>
-                <li data-answer="B"
+                <li data-answer="B" className='option'
                     onClick={event => checkAnswerSimilarQuestion(event, "B")}>{question.options.B}</li>
-                <li data-answer="C"
+                <li data-answer="C" className='option'
                     onClick={event => checkAnswerSimilarQuestion(event, "C")}>{question.options.C}</li>
-                <li data-answer="D"
+                <li data-answer="D" className='option'
                     onClick={event => checkAnswerSimilarQuestion(event, "D")}>{question.options.D}</li>
             </ul>
 
@@ -195,18 +197,17 @@ Hints:
                 <button className='previous-button' onClick={previousQuestion}>Previous</button>
             </div>
             <div className='index'>{index + 1} of {data.length} Questions</div>
-            <button
+            {
+                showHindButton &&
+                <button
 
-                className='hint-button'
-                onClick={() => setShowHintModal(!showHintModal)}
-                disabled={!hintButtonEnabled}
-            >
-                Show Hint
-            </button>
-
-            {/* if the user click any wrong answer than the Hind Section will be visible according to the similar question*/}
-            {/* after getting it wrong 1 time the user will able to toggle hints with hint button like previous implementation */}
-
+                    className='hint-button'
+                    onClick={() => setShowHintModal(!showHintModal)}
+                    disabled={!hintButtonEnabled}
+                >
+                    Show Hint
+                </button>
+            }
             {
                 hintsOptions && (
                     <div className={`hint-model-section ${showHintModal ? 'show' : ''}`}>

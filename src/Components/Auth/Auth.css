@@ -1,0 +1,9 @@
+.general {
+    margin: auto;
+    width: 200px;
+    height: 30px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 5px;
+    cursor: pointer;
+}
