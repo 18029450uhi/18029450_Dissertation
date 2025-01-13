@@ -31,7 +31,7 @@ const Hints = ({h}) => {
                     setHintIndex(hintIndex + 1);
                 }
                 clearCheckedMarks();
-            }, 2000);
+            }, 1000);
         } else {
             e.target.classList.add("incorrect-answer");
             setExplanation(explanation);
