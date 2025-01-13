@@ -10,8 +10,8 @@ export const data = [
             ],
             "solution": 3
         },
-        "hints": {
-            "hint_questions": [
+        "hints":
+            [
                 {
                     "question": "What is the 1st step to solve this?",
                     "options": [
@@ -81,30 +81,43 @@ export const data = [
                             "option": "Multiply by 2",
                             "explanation": "Not yet! this will add more complexity"
                         }
-                    ]
+                    ],
+                    "correct": 1
                 }
-            ]
-        },
-        "similarProblem": {
-            "equation": "5x + 4 = 3x + 10",
-            "steps": [
-                "Step 1: Subtract 3x from both sides: 5x - 3x + 4 = 10",
-                "Step 2: Simplify the equation: 2x + 4 = 10",
-                "Step 3: Subtract 4 from both sides: 2x = 6",
-                "Step 4: Divide both sides by 2: x = 3"
             ],
-            "solution": 3
-        },
-        "mcq": {
-            "question": "Solve the equation: 4x + 3 = 2x + 9",
-            "options": {
-                "A": "x = 1",
-                "B": "x = 2",
-                "C": "x = 3",
-                "D": "x = 6"
-            },
-            "correctAnswer": "C"
-        }
+        "similarProblem":
+            {
+                "equation":
+                    "5x + 4 = 3x + 10",
+                "steps":
+                    [
+                        "Step 1: Subtract 3x from both sides: 5x - 3x + 4 = 10",
+                        "Step 2: Simplify the equation: 2x + 4 = 10",
+                        "Step 3: Subtract 4 from both sides: 2x = 6",
+                        "Step 4: Divide both sides by 2: x = 3"
+                    ],
+                "solution": 3
+            }
+        ,
+        "mcq":
+            {
+                "question":
+                    "Solve the equation: 4x + 3 = 2x + 9",
+                "options":
+                    {
+                        "A":
+                            "x = 1",
+                        "B":
+                            "x = 2",
+                        "C":
+                            "x = 3",
+                        "D":
+                            "x = 6"
+                    }
+                ,
+                "correctAnswer":
+                    "C"
+            }
     }
 
 ]

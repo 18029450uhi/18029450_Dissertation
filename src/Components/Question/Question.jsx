@@ -50,26 +50,28 @@ const Question = () => {
     };
 
     const previousQuestion = () => {
-        if (((index < data.length - 1) && index !== 0) || index === data.length - 1) {
+        if (((index < data.length - 1) && index !== 0) || index === data.length) {
             setIndex(index - 1);
             setQuestion(data[index - 1]);
             updateQuestions();
         }
     };
 
-    const toggleHint = () => {
-        setShowHint(!showHint);
-    };
+    // const toggleHint = () => {
+    //     setShowHint(!showHint);
+    // };
 
     const checkAnswer = (e, answer) => {
         if (lock === false) {
             if (answer === question.mcq.correctAnswer) {
                 e.target.classList.add("correct-answer");
+                e.target.classList.remove("incorrect-answer");
             } else {
                 e.target.classList.add("incorrect-answer");
                 const correctAnswerElement = document.querySelector(`li[data-answer="${question.mcq.correctAnswer}"]`);
                 if (correctAnswerElement) {
                     correctAnswerElement.classList.add("correct-answer");
+                    correctAnswerElement.classList.remove("incorrect-answer");
                 }
             }
             setLock(true);
@@ -107,7 +109,7 @@ const Question = () => {
             </div>
 
             <Modal show={showHintModal} onClose={() => setShowHintModal(false)}>
-                <Hints steps={question.originalProblem.steps}/>
+                <Hints hints={question.hints}/>
             </Modal>
 
             <Modal show={showSimilarQuestionModal} onClose={() => setShowSimilarQuestionModal(false)}>
