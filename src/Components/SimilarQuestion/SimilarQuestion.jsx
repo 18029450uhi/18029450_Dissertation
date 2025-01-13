@@ -34,7 +34,45 @@ const SimilarQuestion = (q) => {
         hasFetchedHintsOptions.current = true;
 
         try {
-            const prompt = `Generate a hints options to solve the similar MCQ. Which is based on this question: ${similarMCQ.question}.`;
+            const prompt = `Given the following question: '${similarMCQ.question}', perform the following tasks:
+
+    Generate a similar MCQ question of the same complexity. Include 4 answer options (one correct and three distractors).
+    Provide step-by-step hints as MCQs to help solve the problem. Each hint should include a question with 4 options. When the user selects an option:
+        If correct, display the next step as a new MCQ hint.
+        If incorrect, provide feedback explaining why the choice is incorrect and allow the user to try again.
+    Ensure the hints guide the user toward solving the problem, focusing on the same mathematical concepts as the original question.
+    Format all responses as JSON with the following structure:
+
+{
+  "similar_mcq": {
+    "question": "Text of the new question",
+    "options": ["Option A", "Option B", "Option C", "Option D"],
+    "correct_option": "Option A"
+  },
+  "hints": [
+    {
+      "step": 1,
+      "hint_question": "Hint question text for step 1",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correct_option": "Option A",
+      "feedback": {
+        "correct": "Explanation of why the option is correct",
+        "incorrect": "Explanation of why the option is incorrect"
+      }
+    },
+    {
+      "step": 2,
+      "hint_question": "Hint question text for step 2",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correct_option": "Option B",
+      "feedback": {
+        "correct": "Explanation of why the option is correct",
+        "incorrect": "Explanation of why the option is incorrect"
+      }
+    }
+    // Add more steps as needed
+  ]
+}.`;
             const result = await handleUpload(prompt, schema);
             setHintsOptions(result.response.text);
         } catch (error) {

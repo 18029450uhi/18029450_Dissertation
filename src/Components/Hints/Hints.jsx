@@ -3,57 +3,39 @@ import './Hints.css';
 import Modal from "../Modal/Modal";
 
 const Hints = ({h}) => {
-
     const data = JSON.parse(h);
     const [hintIndex, setHintIndex] = useState(0);
     const [hintOption, setHintOption] = useState(data[hintIndex]);
-    const [lock, setLock] = useState(false);
     const [showExplanationModal, setShowExplanationModal] = useState(false);
     const [explanation, setExplanation] = useState('');
 
     useEffect(() => {
         setHintOption(data[hintIndex]);
     }, [hintIndex, data]);
-
-    const updateQuestions = () => {
-        setLock(false);
-
+    const clearCheckedMarks = () => {
         const answerElements = document.querySelectorAll('li[data-answer]');
         answerElements.forEach(element => {
             element.classList.remove('correct-answer', 'incorrect-answer');
         });
     };
 
-    const nextQuestion = () => {
-        if (hintIndex < data.length - 1) {
-            setHintIndex(hintIndex + 1);
-            updateQuestions();
-        }
-    };
-
-    const previousQuestion = () => {
-        if (hintIndex > 0) {
-            setHintIndex(hintIndex - 1);
-            updateQuestions();
-        }
-    };
 
     const checkAnswerHintOption = (e, answer, explanation, afterApplyingTheOption) => {
-        if (!lock) {
-            if (answer === hintOption.correct) {
-                e.target.classList.add("correct-answer");
-                e.target.classList.remove("incorrect-answer");
-            } else {
-                e.target.classList.add("incorrect-answer");
-                const correctAnswerElement = document.querySelector(`li[data-answer="${hintOption.correct}"]`);
-                if (correctAnswerElement) {
-                    correctAnswerElement.classList.add("correct-answer");
-                    correctAnswerElement.classList.remove("incorrect-answer");
-                }
-            }
+        if (answer === hintOption.correct) {
+            e.target.classList.add("correct-answer");
             setExplanation(explanation);
             setShowExplanationModal(true);
-            setLock(true);
+            setTimeout(() => {
+                setShowExplanationModal(false);
+                if (hintIndex < data.length - 1) {
+                    setHintIndex(hintIndex + 1);
+                }
+                clearCheckedMarks();
+            }, 2000);
+        } else {
+            e.target.classList.add("incorrect-answer");
+            setExplanation(explanation);
+            setShowExplanationModal(true);
         }
     };
 
@@ -73,11 +55,19 @@ const Hints = ({h}) => {
                             </li>
                         ))}
                     </ul>
-                    <div className='hints-toggle-buttons'>
-                        <button className='next' onClick={nextQuestion}>Show Next</button>
-                        <button className='previous' onClick={previousQuestion}>Show Previous</button>
+                    <div className='hints-dots'>
+                        {data.map((_, index) => (
+                            <span
+                                key={index}
+                                className={`dot ${index === hintIndex ? 'active' : ''}`}
+                                onClick={() => {
+                                    setHintIndex(index);
+                                }}
+                            ></span>
+                        ))}
                     </div>
-                    <div className='index'>{hintIndex + 1} of {data.length} Questions</div>
+                    <div className='index'>{hintIndex + 1} of {data.length} Questions
+                    </div>
                 </div>
             </div>
 
