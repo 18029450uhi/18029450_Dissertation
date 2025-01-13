@@ -1,0 +1,29 @@
+.container {
+    width: 70%;
+    margin: 50px auto;
+    background: white;
+    color: #282c34;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.question-section {
+    width: 60%;
+}
+
+.similar-question-section {
+    width: 35%;
+}
+
+.hints {
+    margin-top: 20px;
+}
+
+/*.similar-question {*/
+/*    margin-top: 20px;*/
+/*}*/
