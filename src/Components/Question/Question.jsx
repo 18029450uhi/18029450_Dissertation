@@ -43,12 +43,15 @@ const Question = ({data, user}) => {
             setShowSimilarQuestionModal(false);
             fetchSimilarMCQ();
         }
+    }, [fetchSimilarMCQ, mcq.question]);
 
-        const similarQuestion = JSON.parse(localStorage.getItem("similarQuestion")) || {};
-        similarQuestion[mcq.question] = similarMCQ;
-        localStorage.setItem("similarQuestion", JSON.stringify(similarQuestion));
-
-    }, [fetchSimilarMCQ]);
+    useEffect(() => {
+        if (similarMCQ) {
+            const similarQuestion = JSON.parse(localStorage.getItem("similarQuestion")) || {};
+            similarQuestion[mcq.question] = similarMCQ;
+            localStorage.setItem("similarQuestion", JSON.stringify(similarQuestion));
+        }
+    }, [similarMCQ, mcq.question]);
 
     const getLocalStorage = () => {
         try {

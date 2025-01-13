@@ -34,7 +34,7 @@ const Logout = ({user, setUser}) => {
         };
 
         if (user) {
-            fetchData().then(() => console.log('Data fetched'));
+            fetchData().then(() => console.log('Score fetched'));
         }
     }, [showModal]);
 

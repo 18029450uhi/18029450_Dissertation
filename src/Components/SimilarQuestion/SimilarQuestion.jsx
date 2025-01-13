@@ -8,6 +8,7 @@ import {schema} from "../../RestUtils/Schemas/HintsToSolveSimilarMCQSchema";
 
 
 const SimilarQuestion = ({q}) => {
+
     const data = JSON.parse(q);
     const [index, setIndex] = useState(0);
     const [hintSteps, setHindSteps] = useState([]);
@@ -18,6 +19,16 @@ const SimilarQuestion = ({q}) => {
     const [hintsOptions, setHintsOptions] = useState(null);
     const [hintButtonEnabled, setHintButtonEnabled] = useState(false);
     const [lock, setLock] = useState(false);
+
+    useEffect(() => {
+        const parsedData = JSON.parse(q);
+        setIndex(0); // Reset index when q changes
+        setQuestion(parsedData[0]); // Set the first question
+        setHintButtonEnabled(false); // Reset hint button state
+        fetchedIndices.current.clear(); // Clear fetched indices
+        setHintsOptions(null); // Reset hints options
+    }, [q]); // Run the effect whenever `q` changes
+
 
     // Track indices where hints have already been fetched
     const fetchedIndices = useRef(new Set());
@@ -143,6 +154,14 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
         }
     }, [question, index]);
 
+    useEffect(() => {
+        if (hintsOptions) {
+            const hintsMap = JSON.parse(localStorage.getItem("hintsMap")) || {};
+            hintsMap[question.question] = hintsOptions; // Store the key-value pair
+            localStorage.setItem("hintsMap", JSON.stringify(hintsMap));
+        }
+    }, [hintsOptions, question.question]);
+
     const clearAllSelections = () => {
         const answerElements = document.querySelectorAll('li[data-answer]');
         answerElements.forEach(element => {
@@ -151,41 +170,35 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
     }
 
     useEffect(() => {
-
-        setQuestion(data[index]); // Update the question whenever the index changes
-
-        const hintsMapString = localStorage.getItem("hintsMap");
-        let hintsMap = {};
-
-        if (hintsMapString) {
-            try {
-                hintsMap = JSON.parse(hintsMapString);
-            } catch (error) {
-                console.error('Error parsing hintsMap from localStorage:', error);
-            }
-        }
-
+        const localData = getLocalStorage();
         const questionKey = question.question;
 
-        if (hintsMap[questionKey] !== undefined) {
-            setHintsOptions(hintsMap[questionKey]);
+        if (localData[questionKey] !== undefined) {
+            setHintsOptions(localData[questionKey]);
             setHintButtonEnabled(true);
         } else {
             generateHintOptions();
         }
+    }, [generateHintOptions, question.question]);
 
-    }, [index, question]);
+    const getLocalStorage = () => {
+        try {
+            return JSON.parse(localStorage.getItem("hintsMap")) || {};
+        } catch (error) {
+            console.error("Error reading from localStorage:", error);
+            return {};
+        }
+    };
     const updateQuestions = () => {
         setLock(false);
         clearAllSelections();
     };
-
     const updateHintsStep = (hintsOptions) => {
         const parsedHints = JSON.parse(hintsOptions);
         const hintIndexes = JSON.parse(localStorage.getItem("hintIndexes")) || {};
         const length = hintIndexes[question.question];
         const steps = [];
-        for (let i = 0; i < length + 1; i++) {
+        for (let i = 0; i < length; i++) {
             steps.push(parsedHints[i].correctAnswer.correct_equation);
         }
         setHindSteps(steps);
@@ -199,6 +212,7 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
             setIndex(index + 1);
             updateQuestions();
         }
+        setQuestion(data[index]);
     };
 
     const previousQuestion = () => {
@@ -209,6 +223,7 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
             setIndex(index - 1);
             updateQuestions();
         }
+        setQuestion(data[index]);
     };
 
     const checkAnswerSimilarQuestion = (e, answer) => {

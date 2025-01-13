@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import './App.css';
-import { getText, handleUpload } from "./RestUtils/GetFromGemini";
+import {getText, handleUpload} from "./RestUtils/GetFromGemini";
 import Question from "./Components/Question/Question";
 import QuestionsList from "./Components/QuestionsList/QuestionsList";
 import Logout from './Components/Auth/Logout';
 import SignUpIn from './Components/Auth/SignUpIn';
 import ResetButton from './Components/Auth/ResetButton';
-import { auth, onAuthStateChanged } from './firebase-config';
+import {auth, onAuthStateChanged} from './firebase-config';
 import MathSolverUploader from "./Components/Landing/MathSolverUploader";
-import { schema } from "./RestUtils/Schemas/MCQSchema";
-import { UserProvider, useUser } from './Components/UserContext'; // Import UserProvider and useUser
+import {schema} from "./RestUtils/Schemas/MCQSchema";
+import {UserProvider, useUser} from './Components/UserContext';
+import PreviousQuestionsList from "./Components/PreviouslyAskedQuestions/PreviousQuestionsList"; // Import UserProvider and useUser
 
 function App() {
     const [questionData, setQuestionData] = useState(null);
@@ -45,31 +46,33 @@ function App() {
             <Router>
                 <div>
                     <Routes>
-                        <Route path="/signin" element={<SignUpIn setUser={setUser} />} />
+                        <Route path="/signin" element={<SignUpIn setUser={setUser}/>}/>
                         <Route path="/" element={
                             user ? (
                                 <div>
                                     <div className="button-position">
-                                        <Logout user={user} setUser={setUser} />
-                                        <ResetButton setUser={setUser} setQuestionData={setQuestionData} />
+                                        <Logout user={user} setUser={setUser}/>
+                                        <ResetButton setUser={setUser} setQuestionData={setQuestionData}/>
                                     </div>
                                     {questionData ? (
                                         <div className="main-content">
                                             <div className='question-app'>
-                                                <Question data={questionData} user={user} />
+                                                <Question data={questionData} user={user}/>
                                             </div>
                                             <div className='questions'>
-                                                <QuestionsList questions={questions} onQuestionSelect={handleQuestionSelect} />
+                                                <QuestionsList questions={questions}
+                                                               onQuestionSelect={handleQuestionSelect}/>
+                                                <PreviousQuestionsList user={user}/>
                                             </div>
                                         </div>
                                     ) : (
-                                        <MathSolverUploader onUpload={handleQuestion} />
+                                        <MathSolverUploader onUpload={handleQuestion}/>
                                     )}
                                 </div>
                             ) : (
-                                <SignUpIn setUser={setUser} />
+                                <SignUpIn setUser={setUser}/>
                             )
-                        } />
+                        }/>
                     </Routes>
                 </div>
             </Router>
