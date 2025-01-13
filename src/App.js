@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import './App.css';
 import Question from "./Components/Question/Question";
 import UploadImage from "./Components/UploadQuestion/UploadImage";
+import Login from './Components/Auth/Login';
+import Logout from './Components/Auth/Logout';
 
 function App() {
     const [questionData, setQuestionData] = useState(null);
+    const [user, setUser] = useState(null);
 
     const handleUpload = (data) => {
         setQuestionData(data);
@@ -12,10 +15,17 @@ function App() {
 
     return (
         <div>
-            {questionData ? (
-                <Question data={questionData} />
+            {user ? (
+                <div>
+                    <Logout setUser={setUser} />
+                    {questionData ? (
+                        <Question data={questionData} />
+                    ) : (
+                        <UploadImage onUpload={handleUpload} />
+                    )}
+                </div>
             ) : (
-                <UploadImage onUpload={handleUpload} />
+                <Login setUser={setUser} />
             )}
         </div>
     );

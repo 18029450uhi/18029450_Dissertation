@@ -1,13 +1,11 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
+import {initializeApp} from "firebase/app";
+import {getAnalytics} from "firebase/analytics";
+import {getAuth, GoogleAuthProvider, signInWithPopup, signOut} from 'firebase/auth';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyBnzeJ8iq9aVM8rPKSjfblWMpEFZSTEKkE",
+    apiKey: "YOUR_Firebase_KEY",
     authDomain: "math-question-90677.firebaseapp.com",
     projectId: "math-question-90677",
     storageBucket: "math-question-90677.appspot.com",
@@ -16,6 +14,11 @@ const firebaseConfig = {
     measurementId: "G-M4ZZKLXCCR"
 };
 
-// Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 const analytics = getAnalytics(app);
+
+export {auth, provider, analytics, signInWithPopup, signOut};
+// Initialize Firebase
