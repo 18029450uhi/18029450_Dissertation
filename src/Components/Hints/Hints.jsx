@@ -4,7 +4,6 @@ import Modal from "../Modal/Modal";
 
 const Hints = ({h}) => {
     const data = JSON.parse(h);
-    console.log(data)
     const [hintIndex, setHintIndex] = useState(0);
     const [hintOption, setHintOption] = useState(data[hintIndex]);
     const [showExplanationModal, setShowExplanationModal] = useState(false);
@@ -22,7 +21,7 @@ const Hints = ({h}) => {
 
 
     const checkAnswerHintOption = (e, answer, explanation, afterApplyingTheOption) => {
-        if (answer === hintOption.correct) {
+        if (answer === hintOption.correctAnswer) {
             e.target.classList.add("correct-answer");
             setExplanation(explanation);
             setShowExplanationModal(true);
@@ -49,12 +48,14 @@ const Hints = ({h}) => {
                         {hintOption.question}
                     </h2>
                     <ul>
-                        {hintOption.options.map((option, index) => (
-                            <li key={index} data-answer={index + 1}
-                                onClick={event => checkAnswerHintOption(event, index + 1, option.explanation, option.afterApplyingTheOption)}>
-                                {option.option}
-                            </li>
-                        ))}
+                        <li data-answer="A"
+                            onClick={event => checkAnswerHintOption(event, "A", hintOption.options.A.explanation)}>{hintOption.options.A.option}</li>
+                        <li data-answer="B"
+                            onClick={event => checkAnswerHintOption(event, "B", hintOption.options.B.explanation)}>{hintOption.options.B.option}</li>
+                        <li data-answer="C"
+                            onClick={event => checkAnswerHintOption(event, "C", hintOption.options.C.explanation)}>{hintOption.options.C.option}</li>
+                        <li data-answer="D"
+                            onClick={event => checkAnswerHintOption(event, "D", hintOption.options.D.explanation)}>{hintOption.options.D.option}</li>
                     </ul>
                     <div className='hints-dots'>
                         {data.map((_, index) => (

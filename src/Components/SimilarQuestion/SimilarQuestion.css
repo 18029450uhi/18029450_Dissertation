@@ -8,6 +8,7 @@
     border-radius: 10px;
 
 }
+
 .similar-question .item-text {
     border: none;
     background: #dffff2;
@@ -16,4 +17,18 @@
 .similar-question .item-equation {
     border: none;
     background: #dfe5ff;
+}
+
+.hint-model-section {
+    display: none; /* Initially hide the section */
+    width: 100%; /* Set a fixed width */
+    position: relative;
+    bottom: 0;
+    transition: right 1.5s ease;
+}
+
+.hint-model-section.show {
+    display: block; /* Show the section when the class is added */
+    right: 0;
+    /*right: -100%;*/
 }

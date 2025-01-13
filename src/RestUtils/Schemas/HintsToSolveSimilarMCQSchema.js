@@ -6,21 +6,58 @@ export const schema = {
     items: {
         type: SchemaType.OBJECT,
         properties: {
-            question: {type: SchemaType.STRING, nullable: false},
-            options: {
-                type: SchemaType.ARRAY,
-                items: {
-                    type: SchemaType.OBJECT,
-                    properties: {
-                        option: {type: SchemaType.STRING, nullable: false},
-                        explanation: {type: SchemaType.STRING, nullable: false},
-                        afterApplyingTheOption: {type: SchemaType.STRING, nullable: false},
-                    },
-                    required: ["option", "explanation", "afterApplyingTheOption"],
-                },
+            question: {
+                type: SchemaType.STRING,
+                description: "This the Hint to solve the similar MCQ",
+                nullable: false
             },
-            correct: {type: SchemaType.NUMBER, nullable: false},
+            options: {
+                type: SchemaType.OBJECT,
+                properties: {
+                    A: {
+                        type: SchemaType.OBJECT,
+                        nullable: false,
+                        properties: {
+                            option: {type: SchemaType.STRING, nullable: false},
+                            explanation: {type: SchemaType.STRING, nullable: false}
+                        },
+                        required: ["option", "explanation"]
+                    },
+                    B: {
+                        type: SchemaType.OBJECT, nullable: false,
+                        properties: {
+                            option: {type: SchemaType.STRING, nullable: false},
+                            explanation: {type: SchemaType.STRING, nullable: false}
+                        },
+                        required: ["option", "explanation"]
+                    },
+                    C: {
+                        type: SchemaType.OBJECT,
+                        nullable: false,
+                        properties: {
+                            option: {type: SchemaType.STRING, nullable: false},
+                            explanation: {type: SchemaType.STRING, nullable: false}
+                        },
+                        required: ["option", "explanation"]
+                    },
+                    D: {
+                        type: SchemaType.OBJECT,
+                        nullable: false,
+                        properties: {
+                            option: {type: SchemaType.STRING, nullable: false},
+                            explanation: {type: SchemaType.STRING, nullable: false}
+                        },
+                        required: ["option", "explanation"]
+                    },
+                },
+                required: ["A", "B", "C", "D"],
+            },
+            correctAnswer: {
+                type: SchemaType.STRING,
+                description: "The correct answer key (A, B, C, or D)",
+                nullable: false,
+            },
         },
-        required: ["question", "options", "correct"],
+        required: ["question", "options", "correctAnswer"],
     }
 }

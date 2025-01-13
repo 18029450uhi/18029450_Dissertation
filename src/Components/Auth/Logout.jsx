@@ -16,14 +16,12 @@ const Logout = ({user, setUser}) => {
             let correct = 0;
             let wrong = 0;
             querySnapshot.forEach((doc) => {
-                if (doc.data().data.email === user.email) {
-                    console.log(doc.data().data)
-                    console.log(user.email)
-                    if (doc.data().data.isCorrect) {
-                        correct++;
-                    } else {
-                        wrong++;
-                    }
+                console.log(doc.data().data)
+                console.log(user.email)
+                if (doc.data().data.isCorrect) {
+                    correct++;
+                } else {
+                    wrong++;
                 }
             });
             setCorrectCount(correct);

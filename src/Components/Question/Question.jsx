@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, {useEffect, useState, useCallback, useRef} from 'react';
 import './Question.css';
 import SimilarQuestion from '../SimilarQuestion/SimilarQuestion';
-import { handleUpload } from "../../RestUtils/GetFromGemini";
-import { schema } from "../../RestUtils/Schemas/SimilarMCQSchema";
-import { db } from "../../firebase-config";
-import { collection, addDoc } from 'firebase/firestore';
+import {handleUpload} from "../../RestUtils/GetFromGemini";
+import {schema} from "../../RestUtils/Schemas/SimilarMCQSchema";
+import {db} from "../../firebase-config";
+import {collection, addDoc} from 'firebase/firestore';
 
-const Question = ({ data, user }) => {
+const Question = ({data, user}) => {
     const mcq = JSON.parse(data);
     const [similarMCQ, setSimilarMCQ] = useState(null);
     const [showSimilarQuestionModal, setShowSimilarQuestionModal] = useState(false);
@@ -19,7 +19,11 @@ const Question = ({ data, user }) => {
         hasFetchedSimilarMCQ.current = true;
 
         try {
-            const prompt = `Generate a similar MCQ based on this question: ${mcq.question}`;
+            const prompt = `Given the following algebra MCQ: ${mcq.question} Generate 4 new, unique algebra MCQs that are conceptually similar but numerically different. Each MCQ should have the same structure and difficulty level as the original. Ensure each new MCQ has one correct answer and three incorrect options.
+            *Constraints:*
+                * The generated MCQs must be mathematically correct and solvable.
+                * The incorrect options should be plausible distractors, not obviously wrong.
+                * The level of difficulty should be consistent with the original MCQ.`;
             const result = await handleUpload(prompt, schema);
             setSimilarMCQ(result.response.text);
             setSimilarButtonEnabled(true);
@@ -72,7 +76,7 @@ const Question = ({ data, user }) => {
         <div className='container'>
             <div className='question-section'>
                 <h1>Question App</h1>
-                <hr />
+                <hr/>
                 <div className='content'>
                     <h2 className='question-header'>{mcq.question}</h2>
                     <ul>
@@ -92,7 +96,7 @@ const Question = ({ data, user }) => {
             </div>
             {similarMCQ && (
                 <div className={`similar-question-section ${showSimilarQuestionModal ? 'show' : ''}`}>
-                    <SimilarQuestion q={similarMCQ} />
+                    <SimilarQuestion q={similarMCQ}/>
                 </div>
             )}
         </div>
