@@ -11,7 +11,7 @@ const Hints = ({h, x}) => {
 
     useEffect(() => {
         const hintsMap = JSON.parse(localStorage.getItem("hintsMap")) || {};
-        hintsMap[x] = JSON.parse(h); // Store the key-value pair
+        hintsMap[x] = h; // Store the key-value pair
         localStorage.setItem("hintsMap", JSON.stringify(hintsMap));
     }, [x, h]);
 

@@ -14,9 +14,11 @@ import {schema} from "../../RestUtils/Schemas/HintsToSolveSimilarMCQSchema";
 //     return {__html: katex.renderToString(equation, {throwOnError: false})};
 // };
 
-const SimilarQuestion = ({ q }) => {
+const SimilarQuestion = ({q}) => {
     const data = JSON.parse(q);
     const [index, setIndex] = useState(0);
+    const [hintSteps, setHindSteps] = useState(["Step 1: Add 5 to both sides to isolate the variable term 2x.", "Step 2: After subtracting 5 from both sides, the equation simplifies to 2x=6.", "Step 3: Divide both sides by 2 to solve for the variable x."]);
+    const [isViewedHint, setIsViewedHint] = useState(false);
     const [question, setQuestion] = useState(data[index]);
     const [showHintModal, setShowHintModal] = useState(false);
     const [showHintButton, setShowHintButton] = useState(false);
@@ -139,7 +141,7 @@ Correct Option: A
 Updated Equation: 2x=62x=6
 Final Hint
 
-Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.` ; // Provide the appropriate prompt logic
+Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; // Provide the appropriate prompt logic
             const result = await handleUpload(prompt, schema);
             setHintsOptions(result.response.text);
             setHintButtonEnabled(true);
@@ -150,9 +152,31 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.` ; 
 
     useEffect(() => {
         setQuestion(data[index]); // Update the question whenever the index changes
-        generateHintOptions(); // Fetch hint options
-    }, [index, data, generateHintOptions]);
 
+        const hintsMapString = localStorage.getItem("hintsMap");
+        let hintsMap = {};
+
+        if (hintsMapString) {
+            try {
+                hintsMap = JSON.parse(hintsMapString);
+            } catch (error) {
+                console.error('Error parsing hintsMap from localStorage:', error);
+            }
+        }
+
+        const questionKey = question.question;
+
+        if (hintsMap[questionKey]) {
+            setHintsOptions(hintsMap[questionKey]);
+            setHintButtonEnabled(true);
+        } else {
+            setHintButtonEnabled(false);
+            generateHintOptions();
+        }
+        if (hintsOptions) {
+            setHintButtonEnabled(true);
+        }
+    }, [index, data, generateHintOptions, question.question]);
     const updateQuestions = () => {
         setLock(false);
         const answerElements = document.querySelectorAll('li[data-answer]');
@@ -162,6 +186,9 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.` ; 
     };
 
     const nextQuestion = () => {
+        setIsViewedHint(false);
+        setShowHintButton(false);
+        setHintsOptions(null);
         if (index < data.length - 1) {
             setIndex(index + 1);
             updateQuestions();
@@ -169,6 +196,8 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.` ; 
     };
 
     const previousQuestion = () => {
+        setIsViewedHint(false);
+        setShowHintButton(false);
         if (index > 0) {
             setIndex(index - 1);
             updateQuestions();
@@ -212,6 +241,13 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.` ; 
                 <button className='next-button' onClick={nextQuestion}>Next</button>
                 <button className='previous-button' onClick={previousQuestion}>Previous</button>
             </div>
+            {isViewedHint && (
+                <div className='hint-steps'>
+                    {hintSteps.map((step, index) => (
+                        <div key={index}>{step}</div>
+                    ))}
+                </div>
+            )}
             <div className='index'>{index + 1} of {data.length} Questions</div>
 
             {showHintButton && (
@@ -226,8 +262,11 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.` ; 
 
             {hintsOptions && (
                 <div className={`hint-modal-section ${showHintModal ? 'show' : ''}`}>
-                    <Modal show={showHintModal} onClose={() => setShowHintModal(false)}>
-                        <Hints h={hintsOptions} x={question.question} />
+                    <Modal show={showHintModal} onClose={() => {
+                        setShowHintModal(false);
+                        setIsViewedHint(true)
+                    }}>
+                        <Hints h={hintsOptions} x={question.question}/>
                     </Modal>
                 </div>
             )}

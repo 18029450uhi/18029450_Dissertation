@@ -1,15 +1,14 @@
-import React, {useState, useCallback, useRef, useEffect} from 'react';
-import {ref, set, push} from "firebase/database";
-
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { ref, set, push } from "firebase/database";
 import './Question.css';
 import SimilarQuestion from '../SimilarQuestion/SimilarQuestion';
 import ResultModal from '../Modal/ResultModal';
-import {handleUpload, getVerifyAnswer} from "../../RestUtils/GetFromGemini";
-import {schema as similarMCQSchema} from "../../RestUtils/Schemas/SimilarMCQSchema";
-import {schema as verifyAnswerSchema} from "../../RestUtils/Schemas/VarifyAnswerSchema";
-import {db} from "../../firebase-config";
+import { handleUpload, getVerifyAnswer } from "../../RestUtils/GetFromGemini";
+import { schema as similarMCQSchema } from "../../RestUtils/Schemas/SimilarMCQSchema";
+import { schema as verifyAnswerSchema } from "../../RestUtils/Schemas/VarifyAnswerSchema";
+import { db } from "../../firebase-config";
 
-const Question = ({data, user}) => {
+const Question = ({ data, user}) => {
     const mcq = JSON.parse(data);
     const [similarMCQ, setSimilarMCQ] = useState(null);
     const [showSimilarQuestionModal, setShowSimilarQuestionModal] = useState(false);
@@ -40,10 +39,6 @@ const Question = ({data, user}) => {
         generateSimilarMCQ();
     }, [generateSimilarMCQ]);
 
-    /**
-     * Posts the question data to Realtime Database.
-     * @param {boolean} isCorrect - Indicates if the answer is correct.
-     */
     async function postToRealtimeDatabase(isCorrect) {
         const subject = {
             question: mcq.question,
@@ -79,12 +74,11 @@ const Question = ({data, user}) => {
         }
     };
 
-
     return (
         <div className='container'>
             <div className='question-section'>
                 <h1>Question App</h1>
-                <hr/>
+                <hr />
                 <div className='content'>
                     <h2 className='question-header'>{mcq.question}</h2>
                     <div className='content-button'>

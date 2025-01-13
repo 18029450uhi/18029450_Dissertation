@@ -14,10 +14,10 @@ const MathSolverUploader = ({onUpload}) => {
         if (image) {
             try {
                 const text = JSON.parse(await getText(image, "Extract question/math equation.", imageSchema))
-                console.log(text)
                 const prompt = `You are a helpful math tutor. Guide the user through the solution step by step. Generate MCQs for the user based on the this ${text[0].question} question?`;
                 const result = await handleUpload(prompt, schema);
-                onUpload(result.response.text);
+                onUpload(result.response.text, text);
+
             } catch (error) {
                 console.error('Error:', error);
             }
