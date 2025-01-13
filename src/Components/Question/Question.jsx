@@ -27,9 +27,6 @@ const Question = ({data, user}) => {
             setSimilarMCQ(result.response.text);
             setSimilarButtonEnabled(true);
 
-            const similarQuestion = JSON.parse(localStorage.getItem("similarQuestion")) || {};
-            similarQuestion[mcq.question] = similarMCQ;
-            localStorage.setItem("similarQuestion", JSON.stringify(similarQuestion));
 
         } catch (error) {
             console.error("Error fetching similar MCQ:", error);
@@ -38,7 +35,7 @@ const Question = ({data, user}) => {
 
     useEffect(() => {
         const localData = getLocalStorage();
-        if (localData[mcq.question]) {
+        if (localData[mcq.question] !== undefined) {
             setSimilarMCQ(localData[mcq.question]);
             setSimilarButtonEnabled(true);
         } else {
@@ -46,7 +43,12 @@ const Question = ({data, user}) => {
             setShowSimilarQuestionModal(false);
             fetchSimilarMCQ();
         }
-    }, [fetchSimilarMCQ, mcq.question]);
+
+        const similarQuestion = JSON.parse(localStorage.getItem("similarQuestion")) || {};
+        similarQuestion[mcq.question] = similarMCQ;
+        localStorage.setItem("similarQuestion", JSON.stringify(similarQuestion));
+
+    }, [fetchSimilarMCQ]);
 
     const getLocalStorage = () => {
         try {

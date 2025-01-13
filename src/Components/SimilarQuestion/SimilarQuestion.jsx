@@ -137,12 +137,11 @@ Final Hint
 Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; // Provide the appropriate prompt logic
             const result = await handleUpload(prompt, schema);
             setHintsOptions(result.response.text);
-            setShowHintButton(false);
-            setHintButtonEnabled(false);
+            setHintButtonEnabled(true);
         } catch (error) {
             console.error('Error fetching hints:', error);
         }
-    }, [data, index]);
+    }, [question, index]);
 
     const clearAllSelections = () => {
         const answerElements = document.querySelectorAll('li[data-answer]');
@@ -168,14 +167,14 @@ Now that the equation is 2x=62x=6, solve for xx by dividing both sides by 2.`; /
 
         const questionKey = question.question;
 
-        if (hintsMap[questionKey]) {
+        if (hintsMap[questionKey] !== undefined) {
             setHintsOptions(hintsMap[questionKey]);
             setHintButtonEnabled(true);
         } else {
             generateHintOptions();
         }
 
-    }, [data, index, generateHintOptions]);
+    }, [index, question]);
     const updateQuestions = () => {
         setLock(false);
         clearAllSelections();
