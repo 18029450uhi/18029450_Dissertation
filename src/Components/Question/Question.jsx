@@ -105,7 +105,8 @@ const Question = ({data, user}) => {
                     "        If detected equations exceed GCSE-level complexity, respond with: 'The detected content may require higher-level mathematics processing. Proceeding with interpretation.'\n" +
                     "\n" +
                     "    Error Handling:\n" +
-                    "        If no algebraic content is detected, respond with: 'No algebraic problems, equations, or mathematical expressions found in the input. Please upload a relevant question";
+                    "        If no algebraic content is detected, respond with: 'No algebraic problems, equations, or mathematical expressions found in the input. Please upload a relevant question.Check if the answer is correct or not. Check if the steps by steps given by the user correct or not.";
+
                 const result = await getVerifyAnswer(file, prompt, verifyAnswerSchema);
                 const isCorrect = JSON.parse(result).isCorrect;
                 setResultMessage(isCorrect ? "Congratulations! You have done it." : "You got it wrong.");

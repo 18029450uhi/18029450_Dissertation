@@ -13,7 +13,29 @@ const MathSolverUploader = ({onUpload}) => {
     const getResponse = async () => {
         if (image) {
             try {
-                const text = JSON.parse(await getText(image, "Extract question/math equation.", imageSchema))
+                const text = JSON.parse(await getText(image, "Analyze the provided image or document encoded in Base64 format. Perform the following tasks step-by-step:\n" +
+                    "\n" +
+                    "    Blank or Unreadable Check:\n" +
+                    "        Verify if the input is blank, blurry, or unreadable.\n" +
+                    "        Respond with: 'The document appears blank, blurry, or unreadable. Please upload a clearer image or document.'\n" +
+                    "\n" +
+                    "    Content Type Classification:\n" +
+                    "        Identify whether the input contains non-mathematical data, such as tables, Excel sheets, or unrelated text.\n" +
+                    "        Respond with: 'This document contains non-mathematical content (e.g., tables or text) and cannot be processed for algebraic problem-solving.'\n" +
+                    "\n" +
+                    "    Geometric and Diagram Detection:\n" +
+                    "        Check if the input contains geometric diagrams or shapes instead of algebraic equations.\n" +
+                    "        Respond with: 'This image appears to contain geometric data or diagrams. Algebraic processing is not supported for such inputs.'\n" +
+                    "\n" +
+                    "    Algebraic Equation Detection:\n" +
+                    "        Determine if the input includes algebraic problems, equations, expressions, or formulas relevant to Nat 5, GCSE, or higher-level mathematics.\n" +
+                    "        Extract and output the identified question or mathematical content clearly.\n" +
+                    "\n" +
+                    "    Complexity Evaluation:\n" +
+                    "        If detected equations exceed GCSE-level complexity, respond with: 'The detected content may require higher-level mathematics processing. Proceeding with interpretation.'\n" +
+                    "\n" +
+                    "    Error Handling:\n" +
+                    "        If no algebraic content is detected, respond with: 'No algebraic problems, equations, or mathematical expressions found in the input. Please upload a relevant question", imageSchema))
                 const prompt = `You are a helpful math tutor. Guide the user through the solution step by step. Generate MCQs for the user based on the this ${text[0].question} question?`;
                 const result = await handleUpload(prompt, schema);
                 onUpload(result.response.text, text);
