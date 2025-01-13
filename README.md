@@ -33,7 +33,7 @@ To run the project locally:
 3. Start the development server using npm start.
 
 ### Firebase Configuration
-Ensure you have a Firebase project set up and replace the configuration in src/firebase-config.js with your project's credentials.
+Ensure to have a Firebase project set up and replace the configuration in src/firebase-config.js with your project's credentials.
 
 ### AI Integration
 The project uses Google Generative AI for analyzing images and generating questions. Ensure you have the API key set up in your environment.
